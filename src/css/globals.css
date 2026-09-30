@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@import "./normalize.css";
+@import "./fonts.css";
+
+@theme {
+  --color-primary: #8b83e8; /* фиолетовый — акцент, кнопки, streak */
+  --color-primary-light: #afa9ec; /* светлый — hover, графики */
+  --color-primary-lighter: #302d4f; /* тёмный фон иконок, бейджей */
+  --color-primary-dark: #c5c0ff; /* светлый — заголовки/акцентный текст */
+
+  --color-success: #7fba4d; /* зелёный — выполнено */
+  --color-warning: #e0a04a; /* янтарный — средний % */
+  --color-danger: #ef6b68; /* красный — не выполнено */
+
+  --color-bg: #121212; /* основной фон страницы */
+  --color-surface: #1c1c1c; /* карточки */
+  --color-surface-hover: #171717;
+  --color-surface-muted: #242421; /* вложенные блоки, сайдбар */
+
+  --color-text-primary: #f1f0eb; /* основной текст */
+  --color-text-secondary: #b5b3ad; /* подписи, метки */
+  --color-text-muted: #7f7e78; /* плейсхолдеры, даты */
+
+  --color-border: rgba(255, 255, 255, 0.1); /* универсальная линия */
+  --color-border-hover: rgba(255, 255, 255, 0.3);
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-weight: 400;
+  font-size: 16px;
+}
+
+.container {
+  width: min(100% - 80px, 1110px);
+  margin: 0 auto;
+}

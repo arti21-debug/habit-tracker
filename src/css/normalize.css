@@ -1,0 +1,53 @@
+/* Base styles */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Media */
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+}
+
+/* Form elements */
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Typography */
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+/* Textareas */
+
+textarea {
+  resize: vertical;
+}
