@@ -18,7 +18,7 @@ export default function UpdatePassword() {
 
   return (
     <main className="flex items-center justify-center h-screen">
-      <article className="flex flex-col items-center w-100 h-[85%] p-8 rounded-2xl bg-surface border border-border max-[1024px]:w-85 max-[1024px]:h-[75%]">
+      <article className="flex flex-col items-center w-100 p-8 rounded-2xl bg-surface border border-border max-[1024px]:w-85">
         <div className="flex items-center gap-3">
           <div className="relative w-8 h-8 rounded-xl bg-primary max-[1024px]:w-7 max-[1024px]:h-7">
             <Activity
@@ -30,13 +30,15 @@ export default function UpdatePassword() {
             HabitFlow
           </h1>
         </div>
+
         <div className="w-full flex flex-col items-center">
-          <h2 className="font-semibold text-[22px] pt-8 max-[1024px]:text-lg max-[1024px]:pt-5">
+          <h2 className="font-semibold text-[22px] pt-5 max-[1024px]:text-lg max-[1024px]:pt-4">
             С возвращением
           </h2>
-          <h3 className="text-text-secondary pt-2 max-[1024px]:text-sm">
+          <h3 className="text-text-secondary pt-1.5 max-[1024px]:text-sm">
             Войдите, чтобы продолжить
           </h3>
+
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -53,7 +55,7 @@ export default function UpdatePassword() {
                 }
               }
             }}
-            className="flex flex-col gap-y-5 w-full pt-6.5 max-[1024px]:gap-y-4.5"
+            className="flex flex-col gap-y-4 w-full pt-5 max-[1024px]:gap-y-3.5"
           >
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-text-secondary max-[1024px]:text-xs">
@@ -66,16 +68,18 @@ export default function UpdatePassword() {
                 className="h-9 rounded-lg border border-border p-4 transition duration-200 hover:border-border-hover max-[1024px]:h-8"
               />
             </div>
+
             {sumbitError && (
-              <div className="flex items-center justify-center w-full h-5 text-xs p-4 rounded-lg border border-red-200 bg-red-50 text-red-600 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400 max-[1024px]:py-3 max-[1024px]:text-[10px]">
+              <div className="flex items-center justify-center w-full text-xs p-2 rounded-lg border border-red-200 bg-red-50 text-red-600 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400 max-[1024px]:text-[10px]">
                 {sumbitError}
               </div>
             )}
             {resetState === "error" && (
-              <div className="flex items-center justify-center w-full h-5 text-xs p-4 rounded-lg border border-red-200 bg-red-50 text-red-600 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400 max-[1024px]:py-3 max-[1024px]:text-[10px]">
+              <div className="flex items-center justify-center w-full text-xs p-2 rounded-lg border border-red-200 bg-red-50 text-red-600 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400 max-[1024px]:text-[10px]">
                 {errResetPassword}
               </div>
             )}
+
             <button
               type="submit"
               disabled={resetState === "loading" || newPassword === ""}

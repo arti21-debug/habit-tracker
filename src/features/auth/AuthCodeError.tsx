@@ -7,8 +7,8 @@ export default function AuthCodeError() {
 
   return (
     <main className="flex items-center justify-center h-screen">
-      <article className="flex flex-col items-center w-100 h-[85%] p-8 rounded-2xl bg-surface border border-border max-[1024px]:w-85 max-[1024px]:h-[75%]">
-        <div className="flex flex-col items-center gap-6 pt-20">
+      <article className="flex flex-col items-center w-100 p-8 rounded-2xl bg-surface border border-border max-[1024px]:w-85">
+        <div className="flex flex-col items-center gap-4 pt-8">
           <div className="relative w-12 h-12 bg-border rounded-full max-[1024px]:w-10 max-[1024px]:h-10">
             <CircleAlert
               color="#dd0e0e"

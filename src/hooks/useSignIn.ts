@@ -1,68 +1,102 @@
 "use client";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 const errorMessages: Record<string, string> = {
-  email_exists: "Аккаунт с таким email уже существует",
-  user_already_exists: "Аккаунт с таким email уже существует",
-  weak_password: "Пароль не соответствует требованиям",
-  email_address_invalid: "Введите корректный email",
-  over_email_send_rate_limit: "Слишком много писем. Попробуйте позже",
+  invalid_credentials: "Неверный email или пароль",
+  email_not_confirmed: "Сначала подтвердите почту",
   over_request_rate_limit: "Слишком много попыток. Попробуйте позже",
+  email_address_invalid: "Введите корректный email",
 };
 
-export default function useSignIn() {
-  const [registerState, setRegisterState] = useState("idle");
-  const [errorRegisterMsg, setErrorRegisterMsg] = useState<null | string>(null);
-  const [successRegisterEmail, setSuccessRegisterEmail] = useState<
-    null | string
-  >(null);
+const googleErrorMessages: Record<string, string> = {
+  access_denied: "Вход через Google был отменён",
+  provider_disabled: "Вход через Google сейчас недоступен",
+  oauth_provider_not_supported: "Вход через Google не поддерживается",
+  bad_oauth_callback: "Не удалось завершить авторизацию через Google",
+  bad_oauth_state:
+    "Сессия авторизации Google недействительна. Попробуйте ещё раз",
+  flow_state_expired: "Сессия авторизации истекла. Попробуйте ещё раз",
+  flow_state_not_found: "Сессия авторизации не найдена. Попробуйте ещё раз",
+  bad_code_verifier: "Не удалось подтвердить авторизацию. Попробуйте ещё раз",
+  server_error: "Ошибка сервера. Попробуйте ещё раз позже",
+};
 
-  // регистрация юзера
+export default function useSignIn(
+  setLoginState: (val: string) => void,
+  setErrorLoginMsg: (val: null | string) => void,
+) {
+  const router = useRouter();
   const supabase = createClient();
-  async function signUpNewUser(email: string, password: string) {
-    setRegisterState("loading");
-    setErrorRegisterMsg(null);
-    setSuccessRegisterEmail(null);
+
+  async function signInWithEmail(email: string, password: string) {
+    setLoginState("loading");
+    setErrorLoginMsg(null);
 
     try {
-      // получение данных о сессии либо о ошибке
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: email,
         password: password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/confirm`,
-        },
       });
 
       if (error) {
         // создание переменной под ошибку регистрации
         const message =
           (error?.code && errorMessages[error.code]) ??
-          "Не удалось создать аккаунт. Попробуйте ещё раз";
+          "Не удалось войти. Попробуйте ещё раз";
 
         // запись в стейт ошибки
-        setErrorRegisterMsg(message);
+        setErrorLoginMsg(message);
         // запись состояния регистрации
-        setRegisterState("error");
+        setLoginState("error");
         return;
       }
 
-      setRegisterState("success");
-      setSuccessRegisterEmail(email);
+      // успешная авторизация, переход на главную
+      setLoginState("success");
+      router.push("/dashboard");
     } catch (error) {
       // ошибка при проблемах с сетью
-      console.error("Sign up failed:", error);
-      setErrorRegisterMsg("Не удалось подключиться. Попробуйте ещё раз");
-      setRegisterState("error");
+      console.error("Sign in failed:", error);
+      setErrorLoginMsg("Не удалось подключиться. Попробуйте ещё раз");
+      setLoginState("error");
     }
   }
 
-  return {
-    registerState,
-    errorRegisterMsg,
-    setErrorRegisterMsg,
-    successRegisterEmail,
-    signUpNewUser,
-  };
+  async function signInWithOAuth() {
+    setLoginState("loading");
+    setErrorLoginMsg(null);
+
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/confirm`,
+        },
+      });
+
+      if (error) {
+        // создание переменной под ошибку регистрации
+        const message =
+          (error?.code && googleErrorMessages[error.code]) ??
+          "Не удалось войти. Попробуйте ещё раз";
+
+        // запись в стейт ошибки
+        setErrorLoginMsg(message);
+        // запись состояния регистрации
+        setLoginState("error");
+        return;
+      }
+
+      // успешная авторизация
+      setLoginState("success");
+    } catch (error) {
+      // ошибка при проблемах с сетью
+      console.error("Sign in failed:", error);
+      setErrorLoginMsg("Не удалось подключиться. Попробуйте ещё раз");
+      setLoginState("error");
+    }
+  }
+
+  return { signInWithEmail, signInWithOAuth };
 }

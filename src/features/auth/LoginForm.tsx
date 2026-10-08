@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 
 import { Activity, MailCheck } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
-import useLogIn from "@/hooks/useLogIn";
+import useSignIn from "@/hooks/useSignIn";
 import useRequestToResetPassword from "@/hooks/useRequestToResetPassword";
 
 interface LoginFormProps {
@@ -19,11 +19,13 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
 
   const formRef = useRef<HTMLFormElement | null>(null);
 
-  const { signInWithEmail, signInWithOAuth } = useLogIn(
+  // хук для авторизации или авторизации через гугл
+  const { signInWithEmail, signInWithOAuth } = useSignIn(
     setLoginState,
     setErrorLoginMsg,
   );
 
+  // хук для сброса пароля
   const {
     resetPasswordPage,
     setResetPasswordPage,
@@ -32,9 +34,27 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
     resetRequest,
   } = useRequestToResetPassword();
 
+  const signIn = () => {
+    const form = formRef.current;
+    if (form) {
+      setSubmitError(null);
+      setErrorLoginMsg(null);
+
+      try {
+        if (password.length < 8)
+          throw new Error("Пароль должен содержать не менее 8 символов");
+        signInWithEmail(email, password);
+      } catch (err) {
+        if (err instanceof Error) {
+          setSubmitError(err.message);
+        }
+      }
+    }
+  };
+
   return (
     <main className="flex items-center justify-center h-screen">
-      <article className="flex flex-col items-center w-100 h-[85%] p-8 rounded-2xl bg-surface border border-border max-[1024px]:w-85 max-[1024px]:h-[75%]">
+      <article className="flex flex-col items-center w-100 p-8 rounded-2xl bg-surface border border-border max-[1024px]:w-85">
         <div className="flex items-center gap-3">
           <div className="relative w-8 h-8 rounded-xl bg-primary max-[1024px]:w-7 max-[1024px]:h-7">
             <Activity
@@ -46,18 +66,24 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
             HabitFlow
           </h1>
         </div>
+
         <div
           className={`${isReset ? "hidden" : "w-full flex flex-col items-center"}`}
         >
-          <h2 className="font-semibold text-[22px] pt-8 max-[1024px]:text-lg max-[1024px]:pt-5">
+          <h2 className="font-semibold text-[22px] pt-5 max-[1024px]:text-lg max-[1024px]:pt-4">
             С возвращением
           </h2>
-          <h3 className="text-text-secondary pt-2 max-[1024px]:text-sm">
+          <h3 className="text-text-secondary pt-1.5 max-[1024px]:text-sm">
             Войдите, чтобы продолжить
           </h3>
+
           <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              signIn();
+            }}
             ref={formRef}
-            className={`${resetPasswordPage === "active" ? "hidden" : "flex"} flex-col gap-y-5 w-full pt-6.5 max-[1024px]:gap-y-4.5`}
+            className={`${resetPasswordPage === "active" ? "hidden" : "flex"} flex-col gap-y-4 w-full pt-5 max-[1024px]:gap-y-3.5`}
           >
             <div className="relative">
               <div className="flex flex-col gap-1.5">
@@ -65,9 +91,13 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
                   Email
                 </label>
                 <input
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setSubmitError(null);
+                    setErrorLoginMsg(null);
+                    setEmail(e.target.value);
+                  }}
                   type="email"
-                  name="email"
+                  required
                   className="h-9 rounded-lg border border-border p-4 transition duration-200 hover:border-border-hover max-[1024px]:h-8"
                 />
               </div>
@@ -76,9 +106,12 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
                   Пароль
                 </label>
                 <input
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setSubmitError(null);
+                    setErrorLoginMsg(null);
+                    setPassword(e.target.value);
+                  }}
                   type="password"
-                  name="password"
                   className="h-9 rounded-lg border border-border p-4 transition duration-200 hover:border-border-hover max-[1024px]:h-8"
                 />
               </div>
@@ -95,32 +128,13 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
                 )}
               </div>
             </div>
-            <button
-              onClick={() => {
-                const form = formRef.current;
-                if (form) {
-                  setSubmitError(null);
-                  setErrorLoginMsg(null);
-                  if (!form.reportValidity()) return;
 
-                  try {
-                    if (password.length < 8)
-                      throw new Error(
-                        "Пароль должен содержать не менее 8 символов",
-                      );
-                    signInWithEmail(email, password);
-                  } catch (err) {
-                    if (err instanceof Error) {
-                      setSubmitError(err.message);
-                    }
-                  }
-                }
-              }}
-              type="button"
+            <button
+              type="submit"
               disabled={
                 loginState === "loading" || email === "" || password === ""
               }
-              className="w-full p-2 h-10.5 mt-2 rounded-lg border border-border transition duration-200 hover:bg-surface-hover max-[1024px]:text-sm max-[1024px]:h-9.25 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full p-2 h-10.5 mt-3 rounded-lg border border-border transition duration-200 hover:bg-surface-hover max-[1024px]:text-sm max-[1024px]:h-9.25 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loginState === "loading" ? (
                 <span className="flex items-center justify-center gap-1">
@@ -132,11 +146,13 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
                 "Войти"
               )}
             </button>
+
             <div className="flex items-center gap-3">
               <span className="w-[50%] h-px border border-border"></span>
               <div className="text-sm text-text-muted">или</div>
               <span className="w-[50%] h-px border border-border"></span>
             </div>
+
             <button
               onClick={() => signInWithOAuth()}
               type="button"
@@ -146,6 +162,7 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
               <FcGoogle />
               Войти через Google
             </button>
+
             <div className="flex justify-between text-sm max-[1024px]:text-xs">
               <button
                 type="button"
@@ -163,13 +180,14 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
               </button>
             </div>
           </form>
+
           {resetPasswordPage === "active" && (
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 resetRequest(e);
               }}
-              className={`${isReset ? "hidden" : "flex"} flex-col gap-y-5 w-full pt-6.5 max-[1024px]:gap-y-4.5`}
+              className={`${isReset ? "hidden" : "flex"} flex-col gap-y-4 w-full pt-5 max-[1024px]:gap-y-3.5`}
             >
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-medium text-text-secondary max-[1024px]:text-xs">
@@ -204,7 +222,7 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
         </div>
 
         {isReset && (
-          <div className="flex flex-col items-center gap-6 pt-20">
+          <div className="flex flex-col items-center gap-4 pt-8">
             <div className="relative w-12 h-12 bg-border rounded-full max-[1024px]:w-10 max-[1024px]:h-10">
               <MailCheck className="absolute inset-0 m-auto max-[1024px]:w-5 max-[1024px]:h-5" />
             </div>
