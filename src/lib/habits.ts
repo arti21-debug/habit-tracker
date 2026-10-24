@@ -1,6 +1,7 @@
-import { Habit, ServerHabit } from "@/types/data";
+import { EditHabit, Habit, ServerHabit } from "@/types/data";
 import { createClient } from "./supabase/client";
 
+// получение привычек
 export async function getHabits(): Promise<ServerHabit[]> {
   const supabase = createClient();
 
@@ -9,9 +10,10 @@ export async function getHabits(): Promise<ServerHabit[]> {
   return data;
 }
 
+// создание привычки
 export async function createHabit(habitData: Habit) {
   const supabase = createClient();
-  
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -23,15 +25,48 @@ export async function createHabit(habitData: Habit) {
   if (error) throw error;
 }
 
-export async function getHabitById(id: string): Promise<ServerHabit> {
+// получение привычки
+export async function getHabitById(
+  id: string | undefined,
+): Promise<ServerHabit> {
   const supabase = createClient();
+
   const { data, error } = await supabase
     .from("habits")
     .select("*")
-    .order("created_at", { ascending: false }) // получаем привычки от новых к старым
     .eq("id", id) // сравнение - equals
-    .single();
+    .maybeSingle();
 
   if (error) throw error;
   return data;
+}
+
+// удаление привычки
+export async function deleteHabit(id: string) {
+  const supabase = createClient();
+
+  const { error } = await supabase.from("habits").delete().eq("id", id);
+  if (error) throw error;
+}
+
+// редактирование привычки
+export async function editHabitData(updateHabit: EditHabit) {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from("habits")
+    .update(updateHabit)
+    .eq("id", updateHabit.id);
+  if (error) throw error;
+}
+
+export async function editArchiveStatus(id: string, isArchived: boolean) {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from("habits")
+    .update({ is_archived: !isArchived })
+    .eq("id", id);
+
+  if (error) throw error;
 }

@@ -20,7 +20,9 @@ export default function AddHabitModal() {
     <>
       {isModalOpen && (
         <div
-          onClick={() => handleClose()}
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) handleClose();
+          }}
           className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
         >
           <form
@@ -36,6 +38,7 @@ export default function AddHabitModal() {
                 category: formData.category,
                 frequency: formData.frequency,
                 ...(formData.days.length > 0 && { days: formData.days }),
+                is_done: false,
               };
 
               mutate(habitData);

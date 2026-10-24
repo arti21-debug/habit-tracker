@@ -1,22 +1,27 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 interface HabitContextType {
   isModalOpen: boolean;
   setIsModalOpen: (val: boolean) => void;
+  openMenuId: null | string;
+  setOpenMenuId: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const HabitContext = createContext<HabitContextType | null>(null);
 
 export function HabitProvider({ children }: { children: React.ReactNode }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   return (
-    <HabitContext.Provider value={{ isModalOpen, setIsModalOpen }}>
+    <HabitContext.Provider
+      value={{ isModalOpen, setIsModalOpen, openMenuId, setOpenMenuId }}
+    >
       {children}
     </HabitContext.Provider>
-  )
+  );
 }
 
 export function useHabit() {

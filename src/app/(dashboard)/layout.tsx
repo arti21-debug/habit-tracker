@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { HabitProvider } from "./habits/context/HabitContext";
 import Providers from "./_components/Providers";
+import { Toaster } from "react-hot-toast";
 
 export default async function DashboardLayout({
   children,
@@ -27,6 +28,7 @@ export default async function DashboardLayout({
   return (
     <Providers>
       <HabitProvider>
+        <Toaster position="bottom-right" />
         <div>
           <HeaderClient username={username} />
           <div className="flex">

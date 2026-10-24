@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { updateUserTimezone } from "@/lib/profiles";
 
 const errorMessages: Record<string, string> = {
   email_exists: "Аккаунт с таким email уже существует",
@@ -51,6 +52,7 @@ export default function useSignUp() {
 
       setRegisterState("success");
       setSuccessRegisterEmail(email);
+      if (data.user) updateUserTimezone(data.user.id);
     } catch (error) {
       // ошибка при проблемах с сетью
       console.error("Sign up failed:", error);

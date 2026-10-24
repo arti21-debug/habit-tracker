@@ -1,8 +1,10 @@
 "use client";
 import { useHabit } from "@/app/(dashboard)/habits/context/HabitContext";
 import { createHabit } from "@/lib/habits";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getUser } from "@/lib/profiles";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function useAddHabit() {
   const [formData, setFormData] = useState({
@@ -36,15 +38,23 @@ export default function useAddHabit() {
 
   const queryClient = useQueryClient();
 
+  // получение юзера
+  const { data: user } = useQuery({
+    queryKey: ["user"],
+    queryFn: getUser,
+  });
+
   const { mutate, isPending, isError, reset } = useMutation({
     mutationFn: createHabit, // передача функции которая создает привычку
     // вызовится после успешного завершения mutationFn
+    onError: () => handleClose(),
     onSuccess: () => {
+      toast.success("Привычка успешно добавлена");
       handleClose();
       // Говорим TanStack что кэш с ключом ["habits"] устарел
       // Он автоматически перезапрашивает getHabits()
       // Habits.tsx обновится сам без каких-либо действий с моей стороны
-      queryClient.invalidateQueries({ queryKey: ["habits"] });
+      queryClient.invalidateQueries({ queryKey: ["habits", user?.id] });
     },
   });
 

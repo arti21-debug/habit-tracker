@@ -1,11 +1,12 @@
 "use client";
 import AddHabitModal from "./AddHabitModal";
-import { useHabit } from "@/app/(dashboard)/habits/context/HabitContext";
-import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
-import { getHabits } from "@/lib/habits";
-import { ServerHabit } from "@/types/data";
+
+import useHabits from "@/hooks/useHabits";
+import EditHabitModal from "./EditHabitModal";
 import { useState } from "react";
+import { ServerHabit } from "@/types/data";
+import HabitDeleteModal from "./HabitDeleteModal";
+import Habit from "./Habit";
 
 const categories = [
   "Все",
@@ -17,27 +18,20 @@ const categories = [
 const statuses = ["Активные", "Архив"];
 
 export default function Habits() {
-  const [filterActive, setFilterActive] = useState("Все");
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [currHabit, setCurrHabit] = useState<null | ServerHabit>(null);
+  const [isDelModalActive, setIsDelModalActive] = useState(false);
 
-  // состояние модалки полученное из context
-  const { setIsModalOpen } = useHabit();
-
-  // data привычек и состояний полученных через TanStack
+  // получение привычек и состояний
   const {
-    data: habits,
+    filterActive,
+    setFilterActive,
+    isModalOpen,
+    setIsModalOpen,
+    filteredHabits,
     isLoading,
     isError,
-  } = useQuery<ServerHabit[]>({
-    queryKey: ["habits"], // передача кэша привычек
-    queryFn: getHabits, // передача функции которая получает привычки
-    staleTime: 1000 * 60 * 5, // данные считаются свежими 5 минут — запроса не будет
-  });
-
-  // фильтрация
-  const filteredHabits =
-    filterActive === "Все" || filterActive === "Активные"
-      ? habits
-      : habits?.filter((habit) => habit.category === filterActive);
+  } = useHabits();
 
   if (isLoading)
     return (
@@ -65,12 +59,11 @@ export default function Habits() {
           <button
             onClick={() => setFilterActive(cat)}
             key={cat}
-            className="px-6 py-2 rounded-full text-sm transition-colors max-[1024px]:text-xs max-[1024px]:px-3 max-[1024px]:py-1.5"
+            className={`px-6 py-2 rounded-full text-sm transition-colors ${filterActive === cat ? "bg-white" : "bg-transparent"} max-[1024px]:text-xs max-[1024px]:px-3 max-[1024px]:py-1.5 duration-200 ${filterActive !== cat && "hover:bg-surface-hover"}`}
             style={{
               border: "1px solid var(--color-border)",
               color:
                 filterActive === cat ? "black" : "var(--color-text-secondary)",
-              background: filterActive === cat ? "white" : "transparent",
             }}
           >
             {cat}
@@ -84,12 +77,11 @@ export default function Habits() {
           <button
             onClick={() => setFilterActive(s)}
             key={s}
-            className="px-6 py-2 rounded-full text-sm transition-colors max-[1024px]:text-xs max-[1024px]:px-3 max-[1024px]:py-1.5"
+            className={`px-6 py-2 rounded-full text-sm transition-colors ${filterActive === s ? "bg-white" : "bg-transparent"} max-[1024px]:text-xs max-[1024px]:px-3 max-[1024px]:py-1.5 duration-200 ${filterActive !== s && "hover:bg-surface-hover"}`}
             style={{
               border: "1px solid var(--color-border)",
               color:
                 filterActive === s ? "black" : "var(--color-text-secondary)",
-              background: filterActive === s ? "white" : "transparent",
             }}
           >
             {s}
@@ -100,122 +92,18 @@ export default function Habits() {
       {/* Grid */}
       <div className="grid grid-cols-[repeat(auto-fit,260px)] gap-4">
         {filteredHabits?.map((habit) => (
-          <Link
-            href={`/habits/${habit.id}`}
+          <Habit
             key={habit.id}
-            className="p-4 rounded-xl flex flex-col gap-3"
-            style={{
-              background: "var(--color-surface)",
-              border: "1px solid var(--color-border)",
-            }}
-          >
-            {/* Card header */}
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
-                  style={{ background: "var(--color-surface-muted)" }}
-                >
-                  {habit.icon}
-                </div>
-                <div>
-                  <div
-                    className="text-sm font-medium"
-                    style={{ color: "var(--color-text-primary)" }}
-                  >
-                    {habit.name}
-                  </div>
-                  <div
-                    className="text-xs mt-0.5"
-                    style={{ color: "var(--color-text-muted)" }}
-                  >
-                    {habit.category} · {habit.frequency}
-                  </div>
-                </div>
-              </div>
-              {/* Menu button */}
-              <button
-                className="w-6 h-6 rounded-md flex items-center justify-center text-lg leading-none"
-                style={{ color: "var(--color-text-muted)" }}
-              >
-                ···
-              </button>
-            </div>
-
-            {/* Stats row */}
-            <div className="grid grid-cols-3 gap-2">
-              <div className="flex flex-col gap-0.5">
-                <span
-                  className="text-xs"
-                  style={{ color: "var(--color-text-muted)" }}
-                >
-                  Streak
-                </span>
-                <span
-                  className="text-sm font-medium"
-                  style={{ color: "var(--color-text-primary)" }}
-                >
-                  {/* 🔥 {habit.streak} */}
-                </span>
-              </div>
-              <div className="flex flex-col gap-0.5">
-                <span
-                  className="text-xs"
-                  style={{ color: "var(--color-text-muted)" }}
-                >
-                  Месяц
-                </span>
-                <span
-                  className="text-sm font-medium"
-                  // style={{ color: getPercentColor(habit.percent) }}
-                >
-                  {/* {habit.percent}% */}
-                </span>
-              </div>
-              <div className="flex flex-col gap-0.5">
-                <span
-                  className="text-xs"
-                  style={{ color: "var(--color-text-muted)" }}
-                >
-                  Сегодня
-                </span>
-                <span
-                  className="text-xs font-medium"
-                  // style={{
-                  //   color: habit.done
-                  //     ? "var(--color-success)"
-                  //     : "var(--color-danger)",
-                  // }}
-                >
-                  {/* {habit.done ? "✓ Выполнена" : "✗ Нет"} */}
-                </span>
-              </div>
-            </div>
-
-            {/* Progress bar */}
-            <div>
-              <div
-                className="w-full h-1 rounded-full overflow-hidden"
-                style={{ background: "var(--color-surface-muted)" }}
-              >
-                <div
-                  className="h-full rounded-full transition-all"
-                  // style={{
-                  //   width: `${habit.percent}%`,
-                  //   background: getPercentColor(habit.percent),
-                  // }}
-                />
-              </div>
-            </div>
-          </Link>
+            habit={habit}
+            setIsEditModalOpen={setIsEditModalOpen}
+            setCurrHabit={setCurrHabit}
+            setIsDelModalActive={setIsDelModalActive}
+          />
         ))}
 
         {/* Add card */}
         <button
-          onClick={() => {
-            setIsModalOpen(true);
-            <AddHabitModal />;
-          }}
+          onClick={() => setIsModalOpen(true)}
           className="p-4 rounded-xl flex flex-col items-center justify-center gap-2 min-h-36 transition-colors"
           style={{
             border: "1px dashed var(--color-border-hover)",
@@ -227,7 +115,20 @@ export default function Habits() {
           <span className="text-sm">Добавить привычку</span>
         </button>
       </div>
-      <AddHabitModal />
+      {isModalOpen && <AddHabitModal />}
+      {isEditModalOpen && (
+        <EditHabitModal
+          habitId={currHabit?.id}
+          setIsEditModalOpen={setIsEditModalOpen}
+        />
+      )}
+      {isDelModalActive && currHabit && (
+        <HabitDeleteModal
+          isDelModalActive={isDelModalActive}
+          setIsDelModalActive={setIsDelModalActive}
+          habitId={currHabit.id}
+        />
+      )}
     </div>
   );
 }

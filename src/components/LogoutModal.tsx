@@ -2,6 +2,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   isExitModalActive: boolean;
@@ -24,6 +25,8 @@ export default function LogOutModal({
     }
 
     // logout успешен
+    const queryClient = useQueryClient();
+    queryClient.clear(); // очищаем кэш при выходе
   };
 
   return (
@@ -31,7 +34,7 @@ export default function LogOutModal({
       {isExitModalActive && (
         <div
           onClick={() => setIsExitModalActive(false)}
-          className="fixed inset-0 flex items-center justify-center bg-bg/50"
+          className="fixed inset-0 flex items-center justify-center z-10 bg-bg/50"
         >
           <div
             onClick={(e) => e.stopPropagation()}

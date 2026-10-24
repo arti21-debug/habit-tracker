@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { updateUserTimezone } from "@/lib/profiles";
 
 const errorMessages: Record<string, string> = {
   invalid_credentials: "Неверный email или пароль",
@@ -55,6 +56,7 @@ export default function useSignIn(
       // успешная авторизация, переход на главную
       setLoginState("success");
       router.push("/dashboard");
+      updateUserTimezone(data.user.id);
     } catch (error) {
       // ошибка при проблемах с сетью
       console.error("Sign in failed:", error);
