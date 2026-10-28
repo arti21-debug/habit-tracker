@@ -1,9 +1,9 @@
 "use client";
 
 import { useHabit } from "@/app/(dashboard)/habits/context/HabitContext";
-import useArchiveHabit from "@/hooks/useArchiveHabit";
-import useHabitDetail from "@/hooks/useHabitDetail";
-import useHabitStats from "@/hooks/useHabitStats";
+import useArchiveHabit from "@/hooks/habits/useArchiveHabit";
+import useHabitDetail from "@/hooks/habits/useHabitDetail";
+import useHabitStats from "@/hooks/habits/useHabitStats";
 import { ServerHabit } from "@/types/data";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

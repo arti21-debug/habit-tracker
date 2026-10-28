@@ -1,12 +1,14 @@
 "use client";
 import EditHabitModal from "@/features/habits/EditHabitModal";
 import HabitDeleteModal from "@/features/habits/HabitDeleteModal";
-import useHabitDetail from "@/hooks/useHabitDetail";
-import useHabitStats from "@/hooks/useHabitStats";
+import useHabitDetail from "@/hooks/habits/useHabitDetail";
+import useHabitStats from "@/hooks/habits/useHabitStats";
 import { Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import WeekStatChart from "./WeekStatChart";
+import getBestHabitStreak from "@/utils/getBestHabitStreak";
+import getCurrentHabitStreak from "@/utils/getCurrentHabitSreak";
 
 export default function HabitDetail({ id }: { id: string }) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -26,13 +28,15 @@ export default function HabitDetail({ id }: { id: string }) {
     capitalizedMonthFrom,
     capitalizedMonthTo,
     yearTo,
+    profile,
   } = useHabitDetail(id);
 
-  const { streak, bestStreak, totalCompletions, lastMonthRate } = useHabitStats(
-    habit?.id,
-  );
+  const { totalCompletions, lastMonthRate } = useHabitStats(habit?.id);
 
   const router = useRouter();
+
+  const bestStreak = getBestHabitStreak(completions ?? []);
+  const streak = getCurrentHabitStreak(completions ?? [], profile?.time_zone);
 
   // Set выполненных дат для быстрой проверки наличия даты
   const completedDates = new Set(
@@ -115,7 +119,9 @@ export default function HabitDetail({ id }: { id: string }) {
                 className="text-sm mt-1"
                 style={{ color: "var(--color-text-muted)" }}
               >
-                {`Здоровье · ежедневно · с ${startDay} ${capitalizedMonth} ${startYear}`}
+                {!startDay || !capitalizedMonth
+                  ? habit.category
+                  : `${habit.category} · ${habit.frequency[0].toLowerCase() + habit.frequency.slice(1)} · с ${startDay} ${capitalizedMonth} ${startYear}`}
               </p>
             </div>
           </div>

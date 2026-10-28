@@ -53,13 +53,13 @@ export default function LogOutModal({
                   handleLogout();
                   router.push("/");
                 }}
-                className="font-medium text-sm py-1.5 px-4 rounded-xl bg-primary"
+                className="font-medium text-sm py-1.5 px-4 rounded-xl bg-primary transition duration-200 hover:bg-primary-light"
               >
                 <span className="text-primary-lighter">Да</span>
               </button>
               <button
                 onClick={() => setIsExitModalActive(false)}
-                className="font-medium text-sm py-1.5 px-4 rounded-xl bg-primary"
+                className="font-medium text-sm py-1.5 px-4 rounded-xl bg-primary transition duration-200 hover:bg-primary-light"
               >
                 <span className="text-primary-lighter">Отмена</span>
               </button>

@@ -60,6 +60,7 @@ export async function editHabitData(updateHabit: EditHabit) {
   if (error) throw error;
 }
 
+// статус архивированной привычки
 export async function editArchiveStatus(id: string, isArchived: boolean) {
   const supabase = createClient();
 

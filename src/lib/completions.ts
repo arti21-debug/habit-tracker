@@ -1,3 +1,4 @@
+import { Completion, HabitWithCompletions } from "@/types/data";
 import { createClient } from "./supabase/client";
 
 // Отметить привычку выполненной
@@ -49,4 +50,33 @@ export async function getCompletionsByPeriod(
 
   if (error) throw error;
   return data;
+}
+
+// получение completions привычек
+export async function getHabitsWithCompletions(
+  habitIds: string[],
+): Promise<HabitWithCompletions[]> {
+  const supabase = createClient();
+
+  if (habitIds.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from("habits")
+    .select(
+      `
+    *,
+    completions:habit_completions(completion_date, completed_at)
+    `,
+    )
+    .in("id", habitIds);
+
+  if (error) throw error;
+  return data.map((habit) => ({
+    ...habit,
+    completions: habit.completions.sort(
+      (a: Completion, b: Completion) =>
+        new Date(b.completion_date).getTime() -
+        new Date(a.completion_date).getTime(),
+    ),
+  }));
 }

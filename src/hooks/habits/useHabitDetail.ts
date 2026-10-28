@@ -38,6 +38,10 @@ export default function useHabitDetail(id: string) {
       queryClient.invalidateQueries({
         queryKey: ["completions"],
       });
+
+      queryClient.invalidateQueries({
+        queryKey: ["habits-with-completions"],
+      });
     },
   });
 
@@ -138,5 +142,6 @@ export default function useHabitDetail(id: string) {
     capitalizedMonthTo,
     yearTo,
     startDate,
+    profile,
   };
 }

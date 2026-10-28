@@ -1,5 +1,5 @@
 "use client";
-import useSignUp from "@/hooks/useSignUp";
+import useSignUp from "@/hooks/auth/useSignUp";
 import { Activity, MailCheck } from "lucide-react";
 import { useState } from "react";
 

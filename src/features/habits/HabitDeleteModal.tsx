@@ -1,6 +1,6 @@
 "use client";
 import { useHabit } from "@/app/(dashboard)/habits/context/HabitContext";
-import useDeleteHabit from "@/hooks/useDeleteHabit";
+import useDeleteHabit from "@/hooks/habits/useDeleteHabit";
 import { X } from "lucide-react";
 
 interface Props {

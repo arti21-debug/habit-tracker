@@ -1,5 +1,5 @@
 "use client";
-import useChartStat from "@/hooks/useChartStat";
+import useChartStat from "@/hooks/habits/useChartStat";
 import {
   BarChart,
   Bar,

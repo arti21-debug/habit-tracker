@@ -1,5 +1,5 @@
 "use client";
-import useAddHabit from "@/hooks/useAddHabit";
+import useAddHabit from "@/hooks/habits/useAddHabit";
 
 export default function AddHabitModal() {
   const {
@@ -38,7 +38,6 @@ export default function AddHabitModal() {
                 category: formData.category,
                 frequency: formData.frequency,
                 ...(formData.days.length > 0 && { days: formData.days }),
-                is_done: false,
               };
 
               mutate(habitData);

@@ -1,5 +1,5 @@
 "use client";
-import useEditHabit from "@/hooks/useEditHabit";
+import useEditHabit from "@/hooks/habits/useEditHabit";
 import { useEffect, useState } from "react";
 
 interface Props {

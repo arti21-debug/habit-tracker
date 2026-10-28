@@ -1,7 +1,7 @@
 "use client";
 import AddHabitModal from "./AddHabitModal";
 
-import useHabits from "@/hooks/useHabits";
+import useHabits from "@/hooks/habits/useHabits";
 import EditHabitModal from "./EditHabitModal";
 import { useState } from "react";
 import { ServerHabit } from "@/types/data";

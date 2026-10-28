@@ -1,5 +1,5 @@
 "use client";
-import useResetPassword from "@/hooks/useResetPassword";
+import useResetPassword from "@/hooks/auth/useResetPassword";
 import { Activity } from "lucide-react";
 import { useState } from "react";
 

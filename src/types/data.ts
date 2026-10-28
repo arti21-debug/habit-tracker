@@ -27,6 +27,10 @@ export interface Habit {
   days?: string[];
 }
 
+export interface HabitWithCompletions extends ServerHabit {
+  completions: Completion[];
+}
+
 export interface ServerHabit extends Habit {
   id: string;
   user_id: string;

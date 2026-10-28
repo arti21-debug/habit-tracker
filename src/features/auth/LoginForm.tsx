@@ -3,8 +3,8 @@ import { useRef, useState } from "react";
 
 import { Activity, MailCheck } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
-import useSignIn from "@/hooks/useSignIn";
-import useRequestToResetPassword from "@/hooks/useRequestToResetPassword";
+import useSignIn from "@/hooks/auth/useSignIn";
+import useRequestToResetPassword from "@/hooks/auth/useRequestToResetPassword";
 
 interface LoginFormProps {
   setActiveAuth: (val: string) => void;
