@@ -117,14 +117,17 @@ export default function useDashboardStats() {
   const completedPercentToday =
     totalHabitsToday > 0 ? (habitsCompletedToday / totalHabitsToday) * 100 : 0;
 
-  // вычисление активности по дням за годовалый промежуток 
+  // вычисление активности по дням за годовалый промежуток
   function lastYearActivityByDays() {
-    const todayDate = new Date().toLocaleDateString("en-CA");
-    const today = new Date(todayDate);
+    const today = new Date();
     const yearAgo = new Date();
 
     // записываем дату - год назад
     yearAgo.setFullYear(yearAgo.getFullYear() - 1);
+
+    // сбрасываем время чтобы цикл сравнивал на уровне календарных дней а не часов и минут
+    today.setHours(0, 0, 0, 0);
+    yearAgo.setHours(0, 0, 0, 0);
 
     let dates = []; // все даты за годовалый промежуток
     let currDate = new Date(yearAgo); // текущая дата итерации, начинается с yearAgo
@@ -148,7 +151,8 @@ export default function useDashboardStats() {
       // обновляем текущую дату для следующей итерации
       currDate.setDate(currDate.getDate() + 1);
     }
-    
+
+    // console.log(daysActivity.toReversed());
     // вернем активность в обратном порядке
     return daysActivity.toReversed();
   }
