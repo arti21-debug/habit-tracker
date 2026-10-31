@@ -51,3 +51,44 @@ export async function getUserTimezone() {
   if (error) throw error;
   return data;
 }
+
+// загрузка аватара
+export async function uploadAvatar(userId: string, file: File) {
+  const supabase = createClient();
+
+  // фиксированный путь без расширения: старый файл перезаписывается,
+  // «осиротевших» файлов (avatar.png и avatar.jpg) не остаётся
+  const path = `${userId}/avatar`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("avatars")
+    .upload(path, file, { upsert: true, contentType: file.type });
+  if (uploadError) throw uploadError;
+
+  const { data } = supabase.storage.from("avatars").getPublicUrl(path);
+
+  // путь не меняется, поэтому браузер и CDN отдадут старую картинку из кэша.
+  // Параметр ?v=... заставляет их загрузить новую
+  const avatarUrl = `${data.publicUrl}?v=${Date.now()}`;
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ avatar_url: avatarUrl, updated_at: new Date().toISOString() })
+    .eq("id", userId);
+  if (error) throw error;
+
+  return avatarUrl;
+}
+
+export async function getAvatar(userId: string) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+  .from("profiles")
+  .select("avatar_url")
+  .eq("id", userId)
+  .single();
+
+  if (error) throw error;
+  return data.avatar_url;
+}
