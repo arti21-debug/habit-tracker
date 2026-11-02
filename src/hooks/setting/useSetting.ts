@@ -31,7 +31,7 @@ export default function useSetting() {
   });
 
   // получение данных юзера
-  const email = user?.user_metadata.email;
+  const email = user?.email;
   const username = user?.user_metadata.username;
   const usernameSliced = username
     ?.split(" ")
@@ -39,5 +39,12 @@ export default function useSetting() {
     .slice(0, 2)
     .join("");
 
-  return { avatarUrl, usernameSliced, username, email, mutate, };
+  return {
+    avatarUrl,
+    usernameSliced,
+    username,
+    email,
+    mutate,
+    user,
+  };
 }

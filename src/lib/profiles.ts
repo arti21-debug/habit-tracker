@@ -1,5 +1,11 @@
 import { createClient } from "./supabase/client";
 
+type UpdateUserResult = {
+  usernameChanged: boolean;
+  emailChanged: boolean;
+  passwordChanged: boolean;
+};
+
 // получение юзера
 export async function getUser() {
   const supabase = createClient();
@@ -84,11 +90,73 @@ export async function getAvatar(userId: string) {
   const supabase = createClient();
 
   const { data, error } = await supabase
-  .from("profiles")
-  .select("avatar_url")
-  .eq("id", userId)
-  .single();
+    .from("profiles")
+    .select("avatar_url")
+    .eq("id", userId)
+    .single();
 
   if (error) throw error;
   return data.avatar_url;
+}
+
+export async function updateUserData(
+  username: string,
+  email: string,
+  password: string,
+): Promise<UpdateUserResult> {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+    error: getUserError,
+  } = await supabase.auth.getUser();
+
+  if (getUserError) throw getUserError;
+  if (!user) throw new Error("Пользователь не авторизован");
+
+  const newUsername = username.trim();
+  const newEmail = email.trim();
+
+  // собираем только те поля, которые действительно изменились
+  const updates: {
+    email?: string;
+    password?: string;
+    data?: { username: string };
+  } = {};
+
+  // если страные данные !== новые то запишем в updates
+  if (newUsername !== user.user_metadata.username) {
+    updates.data = { username: newUsername };
+  }
+
+  if (newEmail !== user.email) {
+    updates.email = newEmail;
+  }
+
+  if (password) {
+    updates.password = password; // пароль не trim-им: пробелы могут быть намеренными
+  }
+
+  const result: UpdateUserResult = {
+    usernameChanged: !!updates.data,
+    emailChanged: !!updates.email,
+    passwordChanged: !!updates.password,
+  };
+
+  // менять нечего: запрос в Supabase не отправляем
+  if (
+    !result.usernameChanged &&
+    !result.emailChanged &&
+    !result.passwordChanged
+  ) {
+    return result;
+  }
+
+  // если состояния истинные, обновляем и редиректим
+  const { error } = await supabase.auth.updateUser(updates, {
+    emailRedirectTo: `${window.location.origin}/auth/confirm?next=/settings`,
+  });
+
+  if (error) throw error;
+  return result;
 }

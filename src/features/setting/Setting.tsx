@@ -1,7 +1,9 @@
 "use client";
+import LogOutModal from "@/components/LogoutModal";
 import useSetting from "@/hooks/setting/useSetting";
+import useSettingForm from "@/hooks/setting/useSettingForm";
 import { Camera, LogOut } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 const inputClass =
   "w-full px-4 py-3 text-base rounded-lg outline-none transition-colors " +
@@ -11,11 +13,47 @@ const inputClass =
 export default function Setting() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { avatarUrl, usernameSliced, username, email, mutate } = useSetting();
+  const [isExitModalActive, setIsExitModalActive] = useState(false);
+  const { avatarUrl, usernameSliced, username, email, mutate, user } =
+    useSetting();
+
+  const {
+    newUsername,
+    newEmail,
+    newPassword,
+    mutateUserData,
+    setNewUsername,
+    setNewEmail,
+    setNewPassword,
+    hasChanges,
+    isPending,
+  } = useSettingForm(username, email);
+
+  // у Google-пользователей пароля нет, им блок не показываем
+  const canChangePassword = user?.app_metadata.provider === "email";
+
+  console.log(
+    "email:",
+    user?.email,
+    "| metadata:",
+    user?.user_metadata.email,
+    "| new:",
+    user?.new_email,
+  );
 
   return (
     <div className="min-h-screen bg-bg">
-      <form className="px-6 py-8 max-w-3xl flex flex-col gap-6">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          mutateUserData({
+            username: newUsername,
+            email: newEmail,
+            password: newPassword,
+          });
+        }}
+        className="px-6 py-8 max-w-3xl flex flex-col gap-6"
+      >
         {/* Avatar */}
         <div className="flex items-center gap-4">
           <div className="relative shrink-0">
@@ -78,29 +116,59 @@ export default function Setting() {
             <label className="text-xs text-text-secondary">
               Имя пользователя
             </label>
-            <input type="text" defaultValue={username} className={inputClass} />
+            <input
+              onChange={(e) => setNewUsername(e.target.value)}
+              type="text"
+              value={newUsername}
+              className={inputClass}
+            />
           </div>
 
           <div className="flex flex-col gap-1.5">
             <label className="text-xs text-text-secondary">Email</label>
-            <input type="email" defaultValue={email} className={inputClass} />
+            <input
+              onChange={(e) => setNewEmail(e.target.value)}
+              type="email"
+              value={newEmail}
+              className={inputClass}
+            />
+            {user?.new_email && (
+              <p className="text-xs text-text-muted">
+                Ожидает подтверждения: {user.new_email}. Откройте письма на
+                обоих адресах.
+              </p>
+            )}
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs text-text-secondary">Новый пароль</label>
-            <input type="password" className={inputClass} />
-          </div>
+          {canChangePassword && (
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs text-text-secondary">
+                Новый пароль
+              </label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                minLength={8}
+                autoComplete="new-password"
+                placeholder="Оставьте пустым, чтобы не менять"
+                className={inputClass}
+              />
+            </div>
+          )}
         </div>
 
         {/* Actions */}
         <div className="flex items-center gap-3">
           <button
             type="submit"
-            className="flex-1 py-3 text-sm rounded-lg text-text-primary bg-bg border border-border-hover"
+            disabled={!hasChanges || isPending || newUsername.trim() === ""}
+            className="flex-1 py-3 text-sm rounded-lg text-text-primary bg-bg border border-border-hover disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Сохранить изменения
           </button>
           <button
+            onClick={() => setIsExitModalActive(true)}
             type="button"
             className="flex items-center gap-2 px-4 py-3 text-sm rounded-lg text-danger bg-transparent border border-danger"
           >
@@ -109,6 +177,10 @@ export default function Setting() {
           </button>
         </div>
       </form>
+      <LogOutModal
+        isExitModalActive={isExitModalActive}
+        setIsExitModalActive={setIsExitModalActive}
+      />
     </div>
   );
 }
