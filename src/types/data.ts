@@ -1,3 +1,8 @@
+export interface UserData {
+  username: string;
+  email: string;
+}
+
 export interface Completion {
   id: string;
   habit_id: string;

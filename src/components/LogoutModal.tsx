@@ -15,6 +15,7 @@ export default function LogOutModal({
 }: Props) {
   const supabase = createClient();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -25,7 +26,6 @@ export default function LogOutModal({
     }
 
     // logout успешен
-    const queryClient = useQueryClient();
     queryClient.clear(); // очищаем кэш при выходе
   };
 
