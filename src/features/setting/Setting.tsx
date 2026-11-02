@@ -32,15 +32,6 @@ export default function Setting() {
   // у Google-пользователей пароля нет, им блок не показываем
   const canChangePassword = user?.app_metadata.provider === "email";
 
-  console.log(
-    "email:",
-    user?.email,
-    "| metadata:",
-    user?.user_metadata.email,
-    "| new:",
-    user?.new_email,
-  );
-
   return (
     <div className="min-h-screen bg-bg">
       <form
