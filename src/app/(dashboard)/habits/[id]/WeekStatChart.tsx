@@ -1,5 +1,6 @@
 "use client";
 import useChartStat from "@/hooks/habits/useChartStat";
+import { useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -16,6 +17,18 @@ type Props = {
 };
 
 export default function WeekStatChart({ habitId }: Props) {
+  const [isMobile, setIsMobile] = useState(
+    window.matchMedia("(max-width: 840px)").matches,
+  );
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 840px)");
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+
+    media.addEventListener("change", handler);
+    return () => media.removeEventListener("change", handler);
+  }, []);
+
   const { weeksStat } = useChartStat(habitId);
 
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -31,7 +44,7 @@ export default function WeekStatChart({ habitId }: Props) {
         }}
       >
         <p style={{ color: "var(--color-text-muted)" }}>
-          Неделя {label.slice(-2)}
+          Неделя {label?.slice(-2)}
         </p>
         <p className="font-medium mt-0.5">{payload[0].value}% выполнено</p>
       </div>
@@ -56,12 +69,12 @@ export default function WeekStatChart({ habitId }: Props) {
       <ResponsiveContainer width="100%" height={180}>
         <BarChart data={weeksStat} barCategoryGap="30%">
           <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.06)" />
-          <XAxis
+          {!isMobile && <XAxis
             dataKey="label"
             tickLine={false}
             axisLine={false}
             tick={{ fontSize: 11, fill: "#7f7e78" }}
-          />
+          />}
           <YAxis
             tickLine={false}
             axisLine={false}

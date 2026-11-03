@@ -90,7 +90,7 @@ export default function Habits() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-[repeat(auto-fit,260px)] gap-4">
+      <div className="grid grid-cols-[repeat(auto-fit,280px)] justify-center gap-4">
         {filteredHabits?.map((habit) => (
           <Habit
             key={habit.id}

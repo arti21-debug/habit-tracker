@@ -100,20 +100,20 @@ export default function HabitDetail({ id }: { id: string }) {
         </div>
 
         {/* Habit info + mark button */}
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center justify-between gap-4 max-[500px]:flex-col">
           <div className="flex items-center gap-4">
             <div
               className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shrink-0"
               style={{ background: "var(--color-primary-lighter)" }}
             >
-              🧘
+              {habit.icon}
             </div>
             <div>
               <h1
                 className="text-xl font-medium"
                 style={{ color: "var(--color-text-primary)" }}
               >
-                Медитация
+                {habit.name}
               </h1>
               <p
                 className="text-sm mt-1"
@@ -139,7 +139,7 @@ export default function HabitDetail({ id }: { id: string }) {
                 });
               }
             }}
-            className="shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium bg-primary transition duration-200 hover:bg-[#6d65dd]"
+            className="shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium bg-primary transition duration-200 hover:bg-[#6d65dd] max-[570px]:px-3 max-[570px]:py-2 max-[570px]:text-xs"
             style={{
               color: "#fff",
               border: "1px solid transparent",
@@ -153,7 +153,7 @@ export default function HabitDetail({ id }: { id: string }) {
       {/* Content */}
       <div className="px-6 py-6 flex flex-col gap-6">
         {/* Stats */}
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
           {[
             { label: "Текущий streak", value: `🔥 ${streak}`, sub: "дней" },
             { label: "Лучший streak", value: `${bestStreak}`, sub: "дней" },
@@ -206,7 +206,7 @@ export default function HabitDetail({ id }: { id: string }) {
             border: "1px solid var(--color-border)",
           }}
         >
-          <div className="flex justify-between">
+          <div className="flex justify-between gap-4">
             <h2
               className="text-sm font-medium mb-4"
               style={{ color: "var(--color-text-primary)" }}
@@ -263,13 +263,23 @@ export default function HabitDetail({ id }: { id: string }) {
 
                   <span className="absolute inset-0 z-10 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
                     {isDone ? (
-                      <span className="text-danger">
-                        Отменить <br /> {date.dateString}
-                      </span>
+                      <>
+                        <span className="text-danger max-[700px]:text-xs max-[580px]:hidden">
+                          Отменить <br /> {date.dateString}
+                        </span>
+                        <span className="hidden text-danger text-lg max-[580px]:block">
+                          ✗
+                        </span>
+                      </>
                     ) : (
-                      <span className="text-success">
-                        Отметить <br /> {date.dateString}
-                      </span>
+                      <>
+                        <span className="text-success max-[700px]:text-xs max-[580px]:hidden">
+                          Отметить <br /> {date.dateString}
+                        </span>
+                        <span className="hidden text-success text-lg max-[580px]:block">
+                          ✓
+                        </span>
+                      </>
                     )}
                   </span>
                 </button>

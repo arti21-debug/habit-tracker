@@ -15,9 +15,15 @@ export default function HabitsHeader() {
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="text-lg py-2.5 px-4 rounded-2xl border border-border bg-surface-muted transition duration-200 hover:bg-surface-hover max-[1024px]:text-base"
+          className="text-lg py-2.5 px-4 rounded-2xl border border-border bg-surface-muted transition duration-200 hover:bg-surface-hover max-[1024px]:text-base max-[540px]:text-sm max-[470px]:hidden"
         >
           + Добавить привычку
+        </button>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="hidden text-xs py-1.5 px-3 rounded-2xl border border-border bg-surface-muted transition duration-200 hover:bg-surface-hover max-[470px]:block"
+        >
+          Добавить
         </button>
       </div>
     </header>
