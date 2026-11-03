@@ -1,5 +1,7 @@
+"use client";
 import BurgNav from "@/components/BurgNav";
 import { Bell, Activity } from "lucide-react";
+import Link from "next/link";
 
 type Props = {
   username: string;
@@ -33,18 +35,19 @@ export default function DashboardHeader({ username }: Props) {
 
         {/* Кнопки в зоне main */}
         <div className="flex-1 min-w-0 flex items-center justify-end gap-4">
-          <button className="relative w-10 h-10 max-[1024px]:w-7 max-[1024px]:h-7">
+          <button className="relative w-10 max-[1024px]:w-7 max-[1024px]:h-7">
             <Bell
               color="#b4b1b1"
               size={25}
-              className="absolute inset-0 m-auto max-[1024px]:w-5 max-[1024px]:h-5"
+              className="absolute inset-0 cursor-default m-auto max-[1024px]:w-5 max-[1024px]:h-5"
             />
           </button>
-          <button className="w-12.5 h-12.5 rounded-full bg-primary max-[1024px]:w-10 max-[1024px]:h-10">
-            <div className="flex items-center justify-center text-lg">
-              {usernameSliced}
-            </div>
-          </button>
+          <Link
+            href="/setting"
+            className="flex items-center justify-center w-12.5 h-12.5 rounded-full bg-primary max-[1024px]:w-10 max-[1024px]:h-10"
+          >
+            <div className="text-lg">{usernameSliced}</div>
+          </Link>
         </div>
       </div>
     </header>
