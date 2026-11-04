@@ -1,6 +1,7 @@
 "use client";
 import useSignUp from "@/hooks/auth/useSignUp";
 import { Activity, MailCheck } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 interface RegisterFormProps {
@@ -22,13 +23,17 @@ export default function RegisterForm({ setActiveAuth }: RegisterFormProps) {
     signUpNewUser,
   } = useSignUp();
 
+  const t = useTranslations("Register");
+  const tErrs = useTranslations("Register.Errors");
+  const tSumbit = useTranslations("Register.RegisterSubmit");
+
   const signUp = () => {
     setSubmitError(null);
     setErrorRegisterMsg(null);
 
     try {
       if (password.length < 8)
-        throw new Error("Пароль должен содержать не менее 8 символов");
+        throw new Error(tErrs("passwordMin", { min: 8 }));
       signUpNewUser(email, password, username);
     } catch (err) {
       if (err instanceof Error) {
@@ -56,10 +61,10 @@ export default function RegisterForm({ setActiveAuth }: RegisterFormProps) {
           className={`${successRegisterEmail ? "hidden" : "w-full flex flex-col items-center"}`}
         >
           <h2 className="font-semibold text-[22px] pt-5 max-[1024px]:text-lg max-[1024px]:pt-4">
-            Приветствуем
+            {t("title")}
           </h2>
           <h3 className="text-text-secondary pt-1.5 max-[1024px]:text-sm">
-            Зарегистрируйтесь, чтобы начать
+            {t("subtitle")}
           </h3>
 
           <form
@@ -72,7 +77,7 @@ export default function RegisterForm({ setActiveAuth }: RegisterFormProps) {
             <div className="relative">
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-medium text-text-secondary max-[1024px]:text-xs">
-                  Имя пользователя
+                  {t("username")}
                 </label>
                 <input
                   onChange={(e) => setUsername(e.target.value)}
@@ -82,7 +87,7 @@ export default function RegisterForm({ setActiveAuth }: RegisterFormProps) {
               </div>
               <div className="flex flex-col pt-3 gap-1.5">
                 <label className="text-sm font-medium text-text-secondary max-[1024px]:text-xs">
-                  Email
+                  {t("email")}
                 </label>
                 <input
                   onChange={(e) => setEmail(e.target.value)}
@@ -92,7 +97,7 @@ export default function RegisterForm({ setActiveAuth }: RegisterFormProps) {
               </div>
               <div className="flex flex-col pt-3 gap-1.5">
                 <label className="text-sm font-medium text-text-secondary max-[1024px]:text-xs">
-                  Пароль
+                  {t("password")}
                 </label>
                 <input
                   onChange={(e) => setPassword(e.target.value)}
@@ -131,18 +136,18 @@ export default function RegisterForm({ setActiveAuth }: RegisterFormProps) {
                   <span className="w-1 h-1 rounded-full bg-current animate-bounce [animation-delay:300ms]" />
                 </span>
               ) : (
-                "Создать аккаунт"
+                t("submit")
               )}
             </button>
 
             <div className="flex justify-center gap-2 text-sm max-[1024px]:text-xs">
-              <p className="text-text-muted">Уже есть аккаунт?</p>
+              <p className="text-text-muted">{t("already_register")}</p>
               <button
                 type="button"
                 onClick={() => setActiveAuth("login")}
                 className="text-primary hover:text-primary-light"
               >
-                Войти
+                {t("log_in")}
               </button>
             </div>
           </form>
@@ -154,17 +159,16 @@ export default function RegisterForm({ setActiveAuth }: RegisterFormProps) {
               <MailCheck className="absolute inset-0 m-auto max-[1024px]:w-5 max-[1024px]:h-5" />
             </div>
             <h1 className="font-bold text-xl max-[1024px]:text-lg">
-              Проверьте почту
+              {tSumbit("check_mail")}
             </h1>
             <p className="text-sm text-text-secondary max-[1024px]:text-xs">
-              Мы отправили ссылку для подтверждения вашего аккаунта. Перейдите
-              по ней, чтобы завершить регистрацию.
+              {tSumbit("text")}
             </p>
             <div className="text-sm text-text-secondary max-[1024px]:text-xs">
               {successRegisterEmail}
             </div>
             <div className="text-sm text-text-secondary max-[1024px]:text-xs">
-              Не получили письмо? Проверьте папку «Спам».
+              {tSumbit("spam")}
             </div>
           </div>
         )}

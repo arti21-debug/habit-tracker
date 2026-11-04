@@ -2,15 +2,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { updateUserTimezone } from "@/lib/profiles";
-
-const errorMessages: Record<string, string> = {
-  email_exists: "Аккаунт с таким email уже существует",
-  user_already_exists: "Аккаунт с таким email уже существует",
-  weak_password: "Пароль не соответствует требованиям",
-  email_address_invalid: "Введите корректный email",
-  over_email_send_rate_limit: "Слишком много писем. Попробуйте позже",
-  over_request_rate_limit: "Слишком много попыток. Попробуйте позже",
-};
+import { useTranslations } from "next-intl";
 
 export default function useSignUp() {
   const [registerState, setRegisterState] = useState("idle");
@@ -18,6 +10,9 @@ export default function useSignUp() {
   const [successRegisterEmail, setSuccessRegisterEmail] = useState<
     null | string
   >(null);
+
+  const t = useTranslations("Register.Errors");
+  const tErr = useTranslations("Errors");
 
   // регистрация юзера
   const supabase = createClient();
@@ -39,9 +34,8 @@ export default function useSignUp() {
 
       if (error) {
         // создание переменной под ошибку регистрации
-        const message =
-          (error?.code && errorMessages[error.code]) ??
-          "Не удалось создать аккаунт. Попробуйте ещё раз";
+        const code = error.code ?? "unknown";
+        const message = t.has(code) ? t(code) : t("unknown");
 
         // запись в стейт ошибки
         setErrorRegisterMsg(message);
@@ -56,7 +50,7 @@ export default function useSignUp() {
     } catch (error) {
       // ошибка при проблемах с сетью
       console.error("Sign up failed:", error);
-      setErrorRegisterMsg("Не удалось подключиться. Попробуйте ещё раз");
+      setErrorRegisterMsg(tErr("network"));
       setRegisterState("error");
     }
   }

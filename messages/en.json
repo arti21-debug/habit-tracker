@@ -1,0 +1,98 @@
+{
+  "Settings": {
+    "language": "Language",
+    "save": "Save changes",
+    "saveFailed": "Failed to save changes. Please try again later",
+    "usernameUpdated": "Username updated",
+    "passwordChanged": "Password changed",
+    "checkEmail": "Check your inbox to confirm your new email address",
+    "noChanges": "No changes to save"
+  },
+  "Errors": {
+    "same_password": "The new password must differ from the old one",
+    "weak_password": "Password does not meet the requirements",
+    "session_not_found": "The password reset session is invalid or has expired",
+    "over_request_rate_limit": "Too many attempts. Please try again later",
+    "unknown": "Something went wrong",
+    "reauthentication_needed": "Please sign in again and retry changing your password",
+    "email_exists": "This email address is already in use",
+    "over_email_send_rate_limit": "Too many emails sent. Please try again later",
+    "network": "Unable to connect. Please try again",
+    "passwordMin": "Password must contain at least {min} characters"
+  },
+  "Login": {
+    "title": "Welcome back",
+    "subtitle": "Sign in to continue",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "or": "or",
+    "google": "Continue with Google",
+    "register": "Sign up",
+    "resetPassword": "Reset password",
+    "passwordMin": "Password must contain at least {min} characters",
+    "Errors": {
+      "invalid_credentials": "Invalid email or password",
+      "email_not_confirmed": "Please confirm your email first",
+      "over_request_rate_limit": "Too many attempts. Please try again later",
+      "email_address_invalid": "Enter a valid email address",
+      "unknown": "Unable to sign in. Please try again"
+    },
+    "ResetPassword": {
+      "email": "Enter your email address",
+      "reset": "Reset",
+      "cancel": "Cancel"
+    },
+    "ResetMailList": {
+      "check_mail": "Check your email",
+      "text": "We've sent you a password reset link. Follow it to reset your password.",
+      "spam": "Didn't receive the email? Check your spam folder."
+    }
+  },
+  "OAuth": {
+    "Errors": {
+      "access_denied": "Google sign-in was cancelled",
+      "provider_disabled": "Google sign-in is currently unavailable",
+      "oauth_provider_not_supported": "Google sign-in is not supported",
+      "bad_oauth_callback": "Could not complete Google authentication",
+      "bad_oauth_state": "Google authentication session is invalid. Please try again",
+      "flow_state_expired": "Authentication session expired. Please try again",
+      "flow_state_not_found": "Authentication session was not found. Please try again",
+      "bad_code_verifier": "Could not verify authentication. Please try again",
+      "server_error": "Server error. Please try again later",
+      "unknown": "Unable to sign in with Google. Please try again"
+    }
+  },
+  "Register": {
+    "title": "Create an account",
+    "subtitle": "Sign up to get started",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Create account",
+    "already_register": "Already have an account?",
+    "log_in": "Log in",
+    "passwordMin": "Password must contain at least {min} characters",
+    "Errors": {
+      "email_exists": "An account with this email already exists",
+      "user_already_exists": "An account with this email already exists",
+      "weak_password": "Password does not meet the requirements",
+      "email_address_invalid": "Enter a valid email address",
+      "over_email_send_rate_limit": "Too many emails sent. Please try again later",
+      "over_request_rate_limit": "Too many attempts. Please try again later",
+      "unknown": "Unable to register. Please try again"
+    },
+    "RegisterSubmit": {
+      "check_mail": "Check your email",
+      "text": "We've sent you a link to confirm your account. Follow it to complete your registration.",
+      "spam": "Didn't receive the email? Check your spam folder."
+    }
+  },
+  "AuthCodeError": {
+    "title": "Unable to sign in",
+    "text": "The registration link is invalid or has expired.",
+    "notReceived": "Didn't receive the email?",
+    "spam": "Check your spam folder.",
+    "backToLogin": "Back to sign in"
+  }
+}
