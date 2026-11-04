@@ -1,13 +1,7 @@
 "use client";
 import { createClient } from "@/lib/supabase/client";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-
-const errorMessages: Record<string, string> = {
-  same_password: "Новый пароль должен отличаться от старого",
-  weak_password: "Пароль слишком простой",
-  session_not_found: "Сессия сброса пароля недействительна или истекла",
-  over_request_rate_limit: "Слишком много попыток. Попробуйте позже",
-};
 
 export default function useResetPassword(
   setResetState: (val: string) => void,
@@ -15,6 +9,8 @@ export default function useResetPassword(
 ) {
   const router = useRouter();
   const supabase = createClient();
+
+  const t = useTranslations("Errors");
 
   async function setPassword(newPassword: string) {
     setResetState("loading");
@@ -28,10 +24,9 @@ export default function useResetPassword(
 
       if (error) {
         console.error(error);
-        console.log(newPassword);
-        const message =
-          (error?.code && errorMessages[error.code]) ??
-          "Не удалось сбросить пароль. Попробуйте ещё раз";
+
+        const code = error.code ?? "unknown";
+        const message = t.has(code) ? t(code) : t("unknown");
 
         setErrorResetPassword(message);
         setResetState("error");

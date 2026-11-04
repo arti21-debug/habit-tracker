@@ -1,9 +1,12 @@
 "use client";
 import { CircleAlert } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 
 export default function AuthCodeError() {
   const router = useRouter();
+
+  const t = useTranslations("AuthCodeError");
 
   return (
     <main className="flex items-center justify-center h-screen">
@@ -16,20 +19,20 @@ export default function AuthCodeError() {
             />
           </div>
           <h1 className="font-bold text-xl max-[1024px]:text-lg">
-            Не удалось войти
+            {t("title")}
           </h1>
           <p className="text-sm text-text-secondary max-[1024px]:text-xs">
-            Ссылка регистрации недействительна или срок её действия истёк.
+            {t("text")}
           </p>
           <div className="flex flex-col gap-1 text-sm text-text-secondary max-[1024px]:text-xs">
-            <span>Не получили письмо?</span>
-            <span>Проверьте папку «Спам».</span>
+            <span>{t("notReceived")}</span>
+            <span>{t("spam")}</span>
           </div>
           <button
             onClick={() => router.push("/")}
             className="flex items-center justify-center gap-2 w-full p-2 rounded-lg border border-border transition duration-200 hover:bg-surface-hover max-[1024px]:text-sm"
           >
-            Вернуться ко входу
+            {t("backToLogin")}
           </button>
         </div>
       </article>

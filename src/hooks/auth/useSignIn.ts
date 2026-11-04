@@ -2,26 +2,7 @@
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { updateUserTimezone } from "@/lib/profiles";
-
-const errorMessages: Record<string, string> = {
-  invalid_credentials: "Неверный email или пароль",
-  email_not_confirmed: "Сначала подтвердите почту",
-  over_request_rate_limit: "Слишком много попыток. Попробуйте позже",
-  email_address_invalid: "Введите корректный email",
-};
-
-const googleErrorMessages: Record<string, string> = {
-  access_denied: "Вход через Google был отменён",
-  provider_disabled: "Вход через Google сейчас недоступен",
-  oauth_provider_not_supported: "Вход через Google не поддерживается",
-  bad_oauth_callback: "Не удалось завершить авторизацию через Google",
-  bad_oauth_state:
-    "Сессия авторизации Google недействительна. Попробуйте ещё раз",
-  flow_state_expired: "Сессия авторизации истекла. Попробуйте ещё раз",
-  flow_state_not_found: "Сессия авторизации не найдена. Попробуйте ещё раз",
-  bad_code_verifier: "Не удалось подтвердить авторизацию. Попробуйте ещё раз",
-  server_error: "Ошибка сервера. Попробуйте ещё раз позже",
-};
+import { useTranslations } from "next-intl";
 
 export default function useSignIn(
   setLoginState: (val: string) => void,
@@ -29,6 +10,10 @@ export default function useSignIn(
 ) {
   const router = useRouter();
   const supabase = createClient();
+
+  const tLogin = useTranslations("Login.Errors");
+  const tOAuth = useTranslations("OAuth.Errors");
+  const tErr = useTranslations("Errors");
 
   async function signInWithEmail(email: string, password: string) {
     setLoginState("loading");
@@ -42,9 +27,8 @@ export default function useSignIn(
 
       if (error) {
         // создание переменной под ошибку регистрации
-        const message =
-          (error?.code && errorMessages[error.code]) ??
-          "Не удалось войти. Попробуйте ещё раз";
+        const code = error.code ?? "unknown";
+        const message = tLogin.has(code) ? tLogin(code) : tLogin("unknown");
 
         // запись в стейт ошибки
         setErrorLoginMsg(message);
@@ -60,7 +44,7 @@ export default function useSignIn(
     } catch (error) {
       // ошибка при проблемах с сетью
       console.error("Sign in failed:", error);
-      setErrorLoginMsg("Не удалось подключиться. Попробуйте ещё раз");
+      setErrorLoginMsg(tErr("network"));
       setLoginState("error");
     }
   }
@@ -70,7 +54,7 @@ export default function useSignIn(
     setErrorLoginMsg(null);
 
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: `${window.location.origin}/auth/confirm`,
@@ -79,9 +63,8 @@ export default function useSignIn(
 
       if (error) {
         // создание переменной под ошибку регистрации
-        const message =
-          (error?.code && googleErrorMessages[error.code]) ??
-          "Не удалось войти. Попробуйте ещё раз";
+        const code = error.code ?? "unknown";
+        const message = tOAuth.has(code) ? tOAuth(code) : tOAuth("unknown");
 
         // запись в стейт ошибки
         setErrorLoginMsg(message);
@@ -95,7 +78,7 @@ export default function useSignIn(
     } catch (error) {
       // ошибка при проблемах с сетью
       console.error("Sign in failed:", error);
-      setErrorLoginMsg("Не удалось подключиться. Попробуйте ещё раз");
+      setErrorLoginMsg(tErr("network"));
       setLoginState("error");
     }
   }

@@ -1,7 +1,8 @@
 "use client";
 import { updateUserData } from "@/lib/profiles";
-import { AuthError } from "@supabase/supabase-js";
+import { AuthError, isAuthError } from "@supabase/supabase-js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -14,7 +15,10 @@ const errorMessages: Record<string, string> = {
   over_request_rate_limit: "Слишком много попыток. Попробуйте позже",
 };
 
-export default function useSettingForm(username: string, email: string | undefined) {
+export default function useSettingForm(
+  username: string,
+  email: string | undefined,
+) {
   const [newUsername, setNewUsername] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -32,29 +36,29 @@ export default function useSettingForm(username: string, email: string | undefin
 
   const queryClient = useQueryClient();
 
+  const t = useTranslations("Settings");
+  const tErrors = useTranslations("Errors");
+
   // изменение данных юзера по форме
   const { mutate: mutateUserData, isPending } = useMutation({
     mutationFn: (data: { username: string; email: string; password: string }) =>
       updateUserData(data.username, data.email, data.password),
 
     onError: (error) => {
-      const code = (error as AuthError).code ?? "";
-      toast.error(
-        errorMessages[code] ??
-          "Не удалось сохранить изменения. Попробуйте позже",
-      );
+      const code = isAuthError(error) ? (error.code ?? "unknown") : "unknown";
+      toast.error(tErrors.has(code) ? tErrors(code) : t("saveFailed"));
     },
 
     onSuccess: ({ usernameChanged, emailChanged, passwordChanged }) => {
       const messages: string[] = [];
-      if (usernameChanged) messages.push("Имя обновлено");
-      if (passwordChanged) messages.push("Пароль изменён");
+      if (usernameChanged) messages.push(t("usernameUpdated"));
+      if (passwordChanged) messages.push(t("passwordChanged"));
       if (emailChanged) {
-        messages.push("Проверьте почту для подтверждения нового email");
+        messages.push(t("checkEmail"));
       }
 
       if (messages.length) toast.success(messages.join(". "));
-      else toast("Нет изменений для сохранения");
+      else toast(t("noChanges"));
 
       if (passwordChanged) setNewPassword(""); // очищаем поле после смены
       queryClient.invalidateQueries({ queryKey: ["user"] });

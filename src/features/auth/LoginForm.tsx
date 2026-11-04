@@ -5,6 +5,8 @@ import { Activity, MailCheck } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import useSignIn from "@/hooks/auth/useSignIn";
 import useRequestToResetPassword from "@/hooks/auth/useRequestToResetPassword";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useTranslations } from "next-intl";
 
 interface LoginFormProps {
   setActiveAuth: (val: string) => void;
@@ -34,6 +36,11 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
     resetRequest,
   } = useRequestToResetPassword();
 
+  const t = useTranslations("Login");
+  const tErrs = useTranslations("Login.Errors");
+  const tReset = useTranslations("Login.ResetPassword");
+  const tList = useTranslations("Login.ResetMailList");
+
   const signIn = () => {
     const form = formRef.current;
     if (form) {
@@ -42,7 +49,7 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
 
       try {
         if (password.length < 8)
-          throw new Error("Пароль должен содержать не менее 8 символов");
+          throw new Error(tErrs("passwordMin", { min: 8 }));
         signInWithEmail(email, password);
       } catch (err) {
         if (err instanceof Error) {
@@ -55,6 +62,9 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
   return (
     <main className="flex items-center justify-center h-screen">
       <article className="flex flex-col items-center w-100 p-8 rounded-2xl bg-surface border border-border max-[1024px]:w-85">
+        <div className="flex justify-end w-full">
+          <LanguageSwitcher />
+        </div>
         <div className="flex items-center gap-3">
           <div className="relative w-8 h-8 rounded-xl bg-primary max-[1024px]:w-7 max-[1024px]:h-7">
             <Activity
@@ -71,10 +81,10 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
           className={`${isReset ? "hidden" : "w-full flex flex-col items-center"}`}
         >
           <h2 className="font-semibold text-[22px] pt-5 max-[1024px]:text-lg max-[1024px]:pt-4">
-            С возвращением
+            {t("title")}
           </h2>
           <h3 className="text-text-secondary pt-1.5 max-[1024px]:text-sm">
-            Войдите, чтобы продолжить
+            {t("subtitle")}
           </h3>
 
           <form
@@ -88,7 +98,7 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
             <div className="relative">
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-medium text-text-secondary max-[1024px]:text-xs">
-                  Email
+                  {t("email")}
                 </label>
                 <input
                   onChange={(e) => {
@@ -103,7 +113,7 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
               </div>
               <div className="flex flex-col pt-3 gap-1.5">
                 <label className="text-sm font-medium text-text-secondary max-[1024px]:text-xs">
-                  Пароль
+                  {t("password")}
                 </label>
                 <input
                   onChange={(e) => {
@@ -143,13 +153,13 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
                   <span className="w-1 h-1 rounded-full bg-current animate-bounce [animation-delay:300ms]" />
                 </span>
               ) : (
-                "Войти"
+                t("submit")
               )}
             </button>
 
             <div className="flex items-center gap-3">
               <span className="w-[50%] h-px border border-border"></span>
-              <div className="text-sm text-text-muted">или</div>
+              <div className="text-sm text-text-muted">{t("or")}</div>
               <span className="w-[50%] h-px border border-border"></span>
             </div>
 
@@ -160,7 +170,7 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
               className="flex items-center justify-center gap-2 w-full p-2 rounded-lg border border-border transition duration-200 hover:bg-surface-hover max-[1024px]:text-sm"
             >
               <FcGoogle />
-              Войти через Google
+              {t("google")}
             </button>
 
             <div className="flex justify-between text-sm max-[1024px]:text-xs">
@@ -169,14 +179,14 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
                 onClick={() => setActiveAuth("register")}
                 className="text-primary hover:text-primary-light"
               >
-                Зарегистрироваться
+                {t("register")}
               </button>
               <button
                 onClick={() => setResetPasswordPage("active")}
                 type="button"
                 className="text-primary hover:text-primary-light"
               >
-                Сбросить пароль
+                {t("resetPassword")}
               </button>
             </div>
           </form>
@@ -191,7 +201,7 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
             >
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-medium text-text-secondary max-[1024px]:text-xs">
-                  Введите свой email
+                  {tReset("email")}
                 </label>
                 <input
                   type="email"
@@ -208,14 +218,14 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
                 type="submit"
                 className="w-full p-2 h-10.5 mt-2 rounded-lg border border-border transition duration-200 hover:bg-surface-hover max-[1024px]:text-sm max-[1024px]:h-9.25 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Сбросить
+                {tReset("reset")}
               </button>
               <button
                 onClick={() => setResetPasswordPage("unactive")}
                 type="button"
                 className="w-full p-2 h-10.5 rounded-lg border border-border transition duration-200 text-red-400 hover:bg-surface-hover max-[1024px]:text-sm max-[1024px]:h-9.25 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Отменить
+                {tReset("cancel")}
               </button>
             </form>
           )}
@@ -227,14 +237,13 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
               <MailCheck className="absolute inset-0 m-auto max-[1024px]:w-5 max-[1024px]:h-5" />
             </div>
             <h1 className="font-bold text-xl max-[1024px]:text-lg">
-              Проверьте почту
+              {tList("check_mail")}
             </h1>
             <p className="text-sm text-text-secondary max-[1024px]:text-xs">
-              Мы отправили ссылку для сброса вашего пароля. Перейдите по ней,
-              чтобы сбросить пароль.
+              {tList("text")}
             </p>
             <div className="text-sm text-text-secondary max-[1024px]:text-xs">
-              Не получили письмо? Проверьте папку «Спам».
+              {tList("spam")}
             </div>
           </div>
         )}
