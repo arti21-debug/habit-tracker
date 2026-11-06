@@ -5,6 +5,7 @@ import useSettingForm from "@/hooks/setting/useSettingForm";
 import { Camera, LogOut } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
+import useDemoData from "../demo/useDemoData";
 
 const inputClass =
   "w-full px-4 py-3 text-base rounded-lg outline-none transition-colors " +
@@ -30,10 +31,13 @@ export default function Setting() {
     isPending,
   } = useSettingForm(username, email);
 
+  const { seed, clear, isSeeding, isClearing } = useDemoData();
+
   // у Google-пользователей пароля нет, им блок не показываем
   const canChangePassword = user?.app_metadata.provider === "email";
 
   const t = useTranslations("Setting");
+  const tDemo = useTranslations("Demo");
 
   return (
     <div className="min-h-screen bg-bg">
@@ -127,7 +131,9 @@ export default function Setting() {
               className={inputClass}
             />
             {user?.new_email && (
-              <p className="text-xs text-text-muted">{t("pending_email", {email: user.new_email})}</p>
+              <p className="text-xs text-text-muted">
+                {t("pending_email", { email: user.new_email })}
+              </p>
             )}
           </div>
 
@@ -168,6 +174,34 @@ export default function Setting() {
           </button>
         </div>
       </form>
+
+      {/* Demo data */}
+      <div className="px-6 max-w-3xl flex flex-col gap-3 pb-8">
+        <div className="h-px bg-border" />
+        <h3 className="text-sm font-medium text-text-primary">
+          {tDemo("title")}
+        </h3>
+        <p className="text-xs text-text-muted">{tDemo("description")}</p>
+
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={() => seed()}
+            disabled={isSeeding || isClearing}
+            className="flex-1 py-3 text-sm rounded-lg text-text-primary bg-bg border border-border-hover disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSeeding ? tDemo("creating") : tDemo("create")}
+          </button>
+          <button
+            type="button"
+            onClick={() => clear()}
+            disabled={isSeeding || isClearing}
+            className="px-4 py-3 text-sm rounded-lg text-danger bg-transparent border border-danger disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {tDemo("clear")}
+          </button>
+        </div>
+      </div>
       <LogOutModal
         isExitModalActive={isExitModalActive}
         setIsExitModalActive={setIsExitModalActive}
