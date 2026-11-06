@@ -14,6 +14,7 @@ export default function LanguageSwitcher() {
 
   return (
     <select
+      className="rounded-lg border border-gray-600 bg-gray-800 px-1.5 py-0.5 text-white outline-none"
       value={locale}
       onChange={async (e) => {
         // 1. записываем выбранный язык в cookie (на сервере)

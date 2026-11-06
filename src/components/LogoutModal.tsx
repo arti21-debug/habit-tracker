@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "use-intl";
 
 type Props = {
   isExitModalActive: boolean;
@@ -29,6 +30,8 @@ export default function LogOutModal({
     queryClient.clear(); // очищаем кэш при выходе
   };
 
+  const t = useTranslations("LogOut");
+
   return (
     <>
       {isExitModalActive && (
@@ -46,7 +49,7 @@ export default function LogOutModal({
             >
               <X color="#d01111" />
             </button>
-            <h1 className="font-semibold text-lg">Выйти из учетной записи?</h1>
+            <h1 className="font-semibold text-lg">{t("log_out_?")}</h1>
             <div className="flex items-center gap-10 pt-6">
               <button
                 onClick={() => {
@@ -55,13 +58,13 @@ export default function LogOutModal({
                 }}
                 className="font-medium text-sm py-1.5 px-4 rounded-xl bg-primary transition duration-200 hover:bg-primary-light"
               >
-                <span className="text-primary-lighter">Да</span>
+                <span className="text-primary-lighter">{t("confirm")}</span>
               </button>
               <button
                 onClick={() => setIsExitModalActive(false)}
                 className="font-medium text-sm py-1.5 px-4 rounded-xl bg-primary transition duration-200 hover:bg-primary-light"
               >
-                <span className="text-primary-lighter">Отмена</span>
+                <span className="text-primary-lighter">{t("cancel")}</span>
               </button>
             </div>
           </div>

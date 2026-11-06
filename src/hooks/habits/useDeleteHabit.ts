@@ -27,7 +27,7 @@ export default function useDeleteHabit(setIsDelModalActive: (val: boolean) => vo
       // Говорим TanStack что кэш с ключом ["habits"] устарел
       // Он автоматически перезапрашивает getHabits()
       // Habits.tsx обновится сам без каких-либо действий с моей стороны
-      queryClient.invalidateQueries({ queryKey: ["habits", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["habits"] });
       router.push("/habits");
     },
   });

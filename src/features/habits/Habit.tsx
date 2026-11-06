@@ -3,8 +3,11 @@
 import { useHabit } from "@/app/(dashboard)/habits/context/HabitContext";
 import useArchiveHabit from "@/hooks/habits/useArchiveHabit";
 import useHabitDetail from "@/hooks/habits/useHabitDetail";
+import { useHabitLabels } from "@/hooks/habits/useHabitLabels";
 import useHabitStats from "@/hooks/habits/useHabitStats";
 import { ServerHabit } from "@/types/data";
+import getCurrentHabitStreak from "@/utils/getCurrentHabitSreak";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -27,11 +30,11 @@ export default function Habit({
   setCurrHabit,
   setIsDelModalActive,
 }: Props) {
-  const { streak, lastMonthRate } = useHabitStats(habit.id);
-  const { completions, date } = useHabitDetail(habit.id);
+  const { lastMonthRate } = useHabitStats(habit.id);
+  const { completions, date, profile } = useHabitDetail(habit.id);
 
   // изменение состояния архивирования привычки
-  const { mutate, isPending } = useArchiveHabit(setIsDelModalActive);
+  const { mutate } = useArchiveHabit(setIsDelModalActive);
 
   // проверяем есть ли запись за сегодня
   const isDone = completions?.some(
@@ -41,6 +44,11 @@ export default function Habit({
   // состояние меню из контекста
   const { openMenuId, setOpenMenuId } = useHabit();
   const router = useRouter();
+
+  const streak = getCurrentHabitStreak(completions ?? [], profile?.time_zone);
+
+  const t = useTranslations("Habit");
+  const labels = useHabitLabels();
 
   return (
     <Link
@@ -72,7 +80,8 @@ export default function Habit({
               className="text-xs mt-0.5"
               style={{ color: "var(--color-text-muted)" }}
             >
-              {habit.category} · {habit.frequency}
+              {labels.category(habit.category)} ·{" "}
+              {labels.frequency(habit.frequency)}
             </div>
           </div>
         </div>
@@ -113,7 +122,7 @@ export default function Habit({
                   className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left transition-colors duration-200 hover:bg-surface-hover"
                   style={{ color: "var(--color-text-secondary)" }}
                 >
-                  <span>👁</span> Открыть
+                  <span>👁</span> {t("open")}
                 </button>
                 <button
                   onClick={(e) => {
@@ -124,7 +133,7 @@ export default function Habit({
                   className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left transition-colors duration-200 hover:bg-surface-hover"
                   style={{ color: "var(--color-text-secondary)" }}
                 >
-                  <span>✏️</span> Редактировать
+                  <span>✏️</span> {t("edit")}
                 </button>
                 <div
                   style={{
@@ -141,7 +150,7 @@ export default function Habit({
                   className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left transition-colors duration-200 hover:bg-surface-hover"
                   style={{ color: "var(--color-danger)" }}
                 >
-                  🗑 Удалить
+                  🗑 {t("delete")}
                 </button>
                 <button
                   onClick={(e) => {
@@ -156,7 +165,7 @@ export default function Habit({
                       : "var(--color-warning)",
                   }}
                 >
-                  {habit.is_archived ? "Разархивировать" : "Архивировать"}
+                  {habit.is_archived ? `${t("unzip")}` : `${t("archive")}`}
                 </button>
               </div>
             </>
@@ -185,7 +194,7 @@ export default function Habit({
             className="text-xs"
             style={{ color: "var(--color-text-muted)" }}
           >
-            Месяц
+            {t("month")}
           </span>
           <span
             className="text-sm font-medium"
@@ -199,7 +208,7 @@ export default function Habit({
             className="text-xs"
             style={{ color: "var(--color-text-muted)" }}
           >
-            Сегодня
+            {t("today")}
           </span>
           <span
             className="text-xs font-medium"
@@ -207,7 +216,7 @@ export default function Habit({
               color: isDone ? "var(--color-success)" : "var(--color-danger)",
             }}
           >
-            {isDone ? "✓ Выполнена" : "✗ Нет"}
+            {isDone ? `✓ ${t("done")}` : `✗ ${t("not_completed")}`}
           </span>
         </div>
       </div>

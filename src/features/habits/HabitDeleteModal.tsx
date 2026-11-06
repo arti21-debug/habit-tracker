@@ -2,6 +2,7 @@
 import { useHabit } from "@/app/(dashboard)/habits/context/HabitContext";
 import useDeleteHabit from "@/hooks/habits/useDeleteHabit";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface Props {
   isDelModalActive: boolean;
@@ -19,6 +20,8 @@ export default function HabitDeleteModal({
 
   // состояние меню из контекста
   const { setOpenMenuId } = useHabit();
+
+  const t = useTranslations("HabitDelete");
 
   return (
     <>
@@ -49,9 +52,7 @@ export default function HabitDeleteModal({
                 >
                   <X color="#d01111" />
                 </button>
-                <h1 className="font-semibold text-lg">
-                  Уверены что хотите удалить привычку?
-                </h1>
+                <h1 className="font-semibold text-lg">{t("confirm_del?")}</h1>
                 <div className="flex items-center gap-10 pt-6">
                   <button
                     onClick={() => {
@@ -59,7 +60,7 @@ export default function HabitDeleteModal({
                     }}
                     className="font-medium text-sm py-1.5 px-4 rounded-xl bg-primary"
                   >
-                    <span className="text-primary-lighter">Да</span>
+                    <span className="text-primary-lighter">{t("confirm")}</span>
                   </button>
                   <button
                     onClick={() => {
@@ -68,7 +69,9 @@ export default function HabitDeleteModal({
                     }}
                     className="font-medium text-sm py-1.5 px-4 rounded-xl bg-primary"
                   >
-                    <span className="text-primary-lighter">Отмена</span>
+                    <span className="text-primary-lighter">
+                      {t("cancel")}
+                    </span>
                   </button>
                 </div>
               </>

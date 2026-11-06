@@ -7,15 +7,20 @@ import { useState } from "react";
 import { ServerHabit } from "@/types/data";
 import HabitDeleteModal from "./HabitDeleteModal";
 import Habit from "./Habit";
+import { useTranslations } from "next-intl";
 
-const categories = [
-  "Все",
-  "Здоровье",
-  "Спорт",
-  "Образование",
-  "Продуктивность",
+const CATEGORIES = [
+  { value: "Все", key: "all" },
+  { value: "Здоровье", key: "health" },
+  { value: "Спорт", key: "sport" },
+  { value: "Образование", key: "education" },
+  { value: "Продуктивность", key: "productivity" },
+] as const;
+
+const STATUSES = [
+  { value: "Активные", key: "active" },
+  { value: "Архив", key: "archive" },
 ];
-const statuses = ["Активные", "Архив"];
 
 export default function Habits() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -33,6 +38,10 @@ export default function Habits() {
     isError,
   } = useHabits();
 
+  const tCategories = useTranslations("Habits.Categories");
+  const tErrs = useTranslations("Errors");
+  const tAdd = useTranslations("HabitHeader");
+
   if (isLoading)
     return (
       <div className="flex items-center justify-center pt-20">
@@ -43,7 +52,7 @@ export default function Habits() {
     return (
       <div className="flex items-center justify-center pt-20">
         <span className="font-medium text-red-400">
-          Ошибка загрузки привычек<br></br>Попробуйте обновить страницу.
+          {tErrs("network")}
         </span>
       </div>
     );
@@ -55,36 +64,40 @@ export default function Habits() {
     >
       {/* Filters */}
       <div className="flex items-center justify-center gap-6 mb-6 flex-wrap">
-        {categories.map((cat) => (
+        {CATEGORIES.map((cat) => (
           <button
-            onClick={() => setFilterActive(cat)}
-            key={cat}
-            className={`px-6 py-2 rounded-full text-sm transition-colors ${filterActive === cat ? "bg-white" : "bg-transparent"} max-[1024px]:text-xs max-[1024px]:px-3 max-[1024px]:py-1.5 duration-200 ${filterActive !== cat && "hover:bg-surface-hover"}`}
+            onClick={() => setFilterActive(cat.value)}
+            key={cat.value}
+            className={`px-6 py-2 rounded-full text-sm transition-colors ${filterActive === cat.value ? "bg-white" : "bg-transparent"} max-[1024px]:text-xs max-[1024px]:px-3 max-[1024px]:py-1.5 duration-200 ${filterActive !== cat.value && "hover:bg-surface-hover"}`}
             style={{
               border: "1px solid var(--color-border)",
               color:
-                filterActive === cat ? "black" : "var(--color-text-secondary)",
+                filterActive === cat.value
+                  ? "black"
+                  : "var(--color-text-secondary)",
             }}
           >
-            {cat}
+            {tCategories(`${cat.key}`)}
           </button>
         ))}
         <div
           className="w-px h-8 mx-1"
           style={{ background: "var(--color-border)" }}
         />
-        {statuses.map((s) => (
+        {STATUSES.map((s) => (
           <button
-            onClick={() => setFilterActive(s)}
-            key={s}
-            className={`px-6 py-2 rounded-full text-sm transition-colors ${filterActive === s ? "bg-white" : "bg-transparent"} max-[1024px]:text-xs max-[1024px]:px-3 max-[1024px]:py-1.5 duration-200 ${filterActive !== s && "hover:bg-surface-hover"}`}
+            onClick={() => setFilterActive(s.value)}
+            key={s.value}
+            className={`px-6 py-2 rounded-full text-sm transition-colors ${filterActive === s.value ? "bg-white" : "bg-transparent"} max-[1024px]:text-xs max-[1024px]:px-3 max-[1024px]:py-1.5 duration-200 ${filterActive !== s.value && "hover:bg-surface-hover"}`}
             style={{
               border: "1px solid var(--color-border)",
               color:
-                filterActive === s ? "black" : "var(--color-text-secondary)",
+                filterActive === s.value
+                  ? "black"
+                  : "var(--color-text-secondary)",
             }}
           >
-            {s}
+            {tCategories(`${s.key}`)}
           </button>
         ))}
       </div>
@@ -112,7 +125,7 @@ export default function Habits() {
           }}
         >
           <span className="text-2xl">+</span>
-          <span className="text-sm">Добавить привычку</span>
+          <span className="text-sm">{tAdd("add_habit")}</span>
         </button>
       </div>
       {isModalOpen && <AddHabitModal />}

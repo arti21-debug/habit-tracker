@@ -5,6 +5,7 @@ import { getUser, getUserTimezone } from "@/lib/profiles";
 import { Completion, HabitWithCompletions } from "@/types/data";
 import getBestHabitStreak from "@/utils/getBestHabitStreak";
 import { useQuery } from "@tanstack/react-query";
+import { useLocale } from "next-intl";
 
 const daysMap: Record<string, number> = {
   Вс: 0,
@@ -42,14 +43,16 @@ export default function useDashboardStats() {
     enabled: habitIds.length > 0,
   });
 
+  const locale = useLocale();
+
   // день недели
   const now = new Date();
-  const weekDay = now.toLocaleDateString("ru-Ru", { weekday: "long" });
+  const weekDay = now.toLocaleDateString(locale, { weekday: "long" });
   const capitalizeWeekDay = weekDay[0].toUpperCase() + weekDay.slice(1);
 
   // сегодняшнее число, месяц, год
   const date = now.getDate();
-  const month = now.toLocaleDateString("ru-Ru", { month: "long" });
+  const month = now.toLocaleDateString(locale, { month: "long" });
   const year = now.getFullYear();
 
   // вычисляем общий процент выполнений привычек за текущий месяц

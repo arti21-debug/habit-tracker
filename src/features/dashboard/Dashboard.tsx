@@ -1,6 +1,7 @@
 "use client";
 import useDashboardStats from "@/hooks/dashboard/useDashboardStats";
 import DashboardHabit from "./DashboardHabit";
+import { useLocale, useTranslations } from "next-intl";
 
 const activityColors: Record<number, string> = {
   0: "var(--color-surface-muted)",
@@ -31,6 +32,9 @@ export default function Dashboard() {
   const monthRate = getCurrentMonthCompletionRate(habitsWithCompletions);
   const activity = lastYearActivityByDays();
 
+  const t = useTranslations("Dashboard");
+  const tStats = useTranslations("Dashboard.Stats");
+
   return (
     <div
       className="p-6 flex flex-col gap-6"
@@ -43,7 +47,7 @@ export default function Dashboard() {
           style={{ color: "var(--color-text-primary)" }}
         >
           {user ? (
-            `Привет, ${user?.user_metadata.username} 👋`
+            `${t("hello")}, ${user?.user_metadata.username} 👋`
           ) : (
             <span className="inline-block w-40 h-6 rounded-md animate-pulse bg-surface-muted" />
           )}
@@ -60,21 +64,25 @@ export default function Dashboard() {
       <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4">
         {[
           {
-            label: "Всего привычек",
+            label: `${tStats("TotalHabits.label")}`,
             value: `${habits?.length}`,
-            sub: "активных",
+            sub: `${tStats("TotalHabits.sub")}`,
           },
           {
-            label: "Выполнено сегодня",
+            label: `${tStats("CompletedToday.label")}`,
             value: `${habitsCompletedToday}/${habitsToday?.length}`,
             sub: `${completedPercentToday.toFixed(0)}%`,
           },
           {
-            label: "Лучший streak",
+            label: `${tStats("BestStreak.label")}`,
             value: `🔥 ${bestStreakOverall}`,
-            sub: "дней подряд",
+            sub: `${tStats("BestStreak.sub")}`,
           },
-          { label: "За месяц", value: `${monthRate}%`, sub: "выполнение" },
+          {
+            label: `${tStats("CompletedByMonth.label")}`,
+            value: `${monthRate}%`,
+            sub: `${tStats("CompletedByMonth.sub")}`,
+          },
         ].map((stat) => (
           <div
             key={stat.label}
@@ -123,13 +131,13 @@ export default function Dashboard() {
             className="text-sm font-medium"
             style={{ color: "var(--color-text-primary)" }}
           >
-            Сегодня
+            {t("today")}
           </h2>
           <span
             className="text-xs"
             style={{ color: "var(--color-text-muted)" }}
           >
-            {`${habitsCompletedToday} из ${habitsToday.length}`}
+            {`${habitsCompletedToday} ${t("from")} ${habitsToday.length}`}
           </span>
         </div>
 
@@ -170,14 +178,14 @@ export default function Dashboard() {
             className="text-sm font-medium"
             style={{ color: "var(--color-text-primary)" }}
           >
-            Активность за год
+            {t("year_activity")}
           </h2>
           <div className="flex items-center gap-1.5">
             <span
               className="text-xs"
               style={{ color: "var(--color-text-muted)" }}
             >
-              меньше
+              {t("less")}
             </span>
             {[0, 1, 2, 3, 4].map((level) => (
               <div
@@ -194,7 +202,7 @@ export default function Dashboard() {
               className="text-xs"
               style={{ color: "var(--color-text-muted)" }}
             >
-              больше
+              {t("more")}
             </span>
           </div>
         </div>

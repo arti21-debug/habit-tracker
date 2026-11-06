@@ -1,19 +1,10 @@
 "use client";
 import { updateUserData } from "@/lib/profiles";
-import { AuthError, isAuthError } from "@supabase/supabase-js";
+import { isAuthError } from "@supabase/supabase-js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-
-const errorMessages: Record<string, string> = {
-  same_password: "Новый пароль должен отличаться от текущего",
-  weak_password: "Пароль не соответствует требованиям",
-  reauthentication_needed: "Войдите заново и повторите смену пароля",
-  email_exists: "Этот email уже используется",
-  over_email_send_rate_limit: "Слишком много писем. Попробуйте позже",
-  over_request_rate_limit: "Слишком много попыток. Попробуйте позже",
-};
 
 export default function useSettingForm(
   username: string,

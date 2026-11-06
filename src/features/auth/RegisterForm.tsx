@@ -1,4 +1,5 @@
 "use client";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import useSignUp from "@/hooks/auth/useSignUp";
 import { Activity, MailCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -40,11 +41,14 @@ export default function RegisterForm({ setActiveAuth }: RegisterFormProps) {
         setSubmitError(err.message);
       }
     }
-  }
+  };
 
   return (
     <main className="flex items-center justify-center h-screen">
-      <article className="flex flex-col items-center w-100 p-8 rounded-2xl bg-surface border border-border max-[1024px]:w-85">
+      <article className="relative flex flex-col items-center w-100 p-8 rounded-2xl bg-surface border border-border max-[1024px]:w-85">
+        <div className="absolute top-2 right-2 flex justify-end w-full">
+          <LanguageSwitcher />
+        </div>
         <div className="flex items-center gap-3">
           <div className="relative w-8 h-8 rounded-xl bg-primary max-[1024px]:w-7 max-[1024px]:h-7">
             <Activity

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import LogOutModal from "./LogoutModal";
+import { useTranslations } from "next-intl";
 
 export default function BurgNav() {
   const [isBurgOpen, setIsBurgOpen] = useState(false);
@@ -19,6 +20,8 @@ export default function BurgNav() {
     document.addEventListener("mousedown", handeClickOutside);
     return () => document.removeEventListener("mousedown", handeClickOutside);
   }, [isBurgOpen]);
+
+  const t = useTranslations("Nav");
 
   return (
     <>
@@ -49,12 +52,12 @@ export default function BurgNav() {
               className="whitespace-nowrap text-[#B1B1B1]"
             >
               <button className="cursor-pointer font-base transition duration-300 hover:text-[#ddd8d8]">
-                Дашборд
+                {t("dashboard")}
               </button>
             </Link>
             <Link href="/habits" className="whitespace-nowrap text-[#B1B1B1]">
               <button className="cursor-pointer font-base transition duration-300 hover:text-[#ddd8d8]">
-                Привычки
+                {t("habits")}
               </button>
             </Link>
             <Link
@@ -62,12 +65,12 @@ export default function BurgNav() {
               className="whitespace-nowrap text-[#B1B1B1]"
             >
               <button className="cursor-pointer font-base transition duration-300 hover:text-[#ddd8d8]">
-                Статистика
+                {t("statistics")}
               </button>
             </Link>
             <Link href="/setting" className="whitespace-nowrap text-[#B1B1B1]">
               <button className="cursor-pointer font-base transition duration-300 hover:text-[#ddd8d8]">
-                Настройки
+                {t("setting")}
               </button>
             </Link>
             <div className="whitespace-nowrap text-[#B1B1B1]">
@@ -75,7 +78,7 @@ export default function BurgNav() {
                 onClick={() => setIsExitModalActive(true)}
                 className="cursor-pointer font-base transition duration-300 hover:text-[#ddd8d8]"
               >
-                Выйти
+                {t("log_out")}
               </button>
             </div>
           </div>

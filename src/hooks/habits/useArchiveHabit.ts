@@ -19,7 +19,7 @@ export default function useArchiveHabit(
     queryFn: getUser,
   });
 
-  const { mutate, isPending } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: ({ id, isArchived }: UpdateArchiveStatus) =>
       editArchiveStatus(id, isArchived),
     onSuccess: () => {
@@ -27,9 +27,9 @@ export default function useArchiveHabit(
       // Говорим TanStack что кэш с ключом ["habits"] устарел
       // Он автоматически перезапрашивает getHabits()
       // Habits.tsx обновится сам без каких-либо действий с моей стороны
-      queryClient.invalidateQueries({ queryKey: ["habits", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["habits"] });
     },
   });
 
-  return { mutate, isPending };
+  return { mutate };
 }

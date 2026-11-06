@@ -94,5 +94,170 @@
     "notReceived": "Didn't receive the email?",
     "spam": "Check your spam folder.",
     "backToLogin": "Back to sign in"
+  },
+  "Dashboard": {
+    "hello": "Hello",
+    "today": "Today",
+    "from": "of",
+    "year_activity": "Activity over the year",
+    "less": "less",
+    "more": "more",
+    "Stats": {
+      "TotalHabits": {
+        "label": "Total habits",
+        "sub": "active"
+      },
+      "CompletedToday": {
+        "label": "Completed today"
+      },
+      "BestStreak": {
+        "label": "Best streak",
+        "sub": "days in a row"
+      },
+      "CompletedByMonth": {
+        "label": "monthly",
+        "sub": "completion"
+      }
+    }
+  },
+  "CreateHabit": {
+    "title": "New Habit",
+    "name": "Name",
+    "nameRequired": "Name *",
+    "namePlaceholder": "e.g. Morning run",
+    "description": "Description",
+    "descriptionPlaceholder": "Optional",
+    "icon": "Icon",
+    "color": "Color",
+    "category": "Category",
+    "frequency": "Frequency",
+    "daily": "Daily",
+    "weekly": "Days of the week",
+    "daysOfWeek": "Days of the week",
+    "categories": {
+      "health": "Health",
+      "sport": "Sport",
+      "education": "Education",
+      "productivity": "Productivity"
+    },
+    "days": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    },
+    "cancel": "Cancel",
+    "create": "Create habit",
+    "createFailed": "Failed to add habit. Please try again."
+  },
+  "HabitDelete": {
+    "confirm_del?": "Are you sure you want to delete this habit?",
+    "confirm": "Yes",
+    "cancel": "Cancel"
+  },
+  "HabitHeader": {
+    "my_habits": "My Habits",
+    "add_habit": "Add Habit",
+    "add_habit_sm": "Add"
+  },
+  "Habits": {
+    "Categories": {
+      "all": "All",
+      "health": "Health",
+      "sport": "Sport",
+      "education": "Education",
+      "productivity": "Productivity",
+      "active": "Active",
+      "archive": "Archive"
+    }
+  },
+  "Habit": {
+    "open": "Open",
+    "edit": "Edit",
+    "delete": "Delete",
+    "archive": "Archive",
+    "unzip": "Unarchive",
+    "month": "Month",
+    "today": "Today",
+    "done": "Completed",
+    "not_completed": "No"
+  },
+  "EditHabit": {
+    "title": "Edit habit",
+    "edit": "Save changes",
+    "loadFailed": "Failed to load habit. Please try again.",
+    "updated": "Habit updated",
+    "updateFailed": "Failed to update habit"
+  },
+  "HabitId": {
+    "back": "Back",
+    "edit": "Edit",
+    "delete": "Delete habit",
+    "from": "from",
+    "done_mark": "Mark as completed",
+    "done_cancel": "Undo",
+    "Stats": {
+      "CurrentStreak": {
+        "label": "Current streak",
+        "sub": "days"
+      },
+      "BestStreak": {
+        "label": "Longest streak",
+        "sub": "days"
+      },
+      "TotalCompleted": {
+        "label": "Total completed",
+        "sub": "days"
+      },
+      "ForMonth": {
+        "label": "Last 30 days",
+        "sub": "completion"
+      }
+    },
+    "completion_schedule": "Completion calendar",
+    "mark": "Mark",
+    "cancel": "Cancel",
+    "done": "Completed",
+    "not_completed": "Not completed"
+  },
+  "WeekStat": {
+    "week": "Week",
+    "completed": "completed",
+    "completion_by_weeks": "Weekly completion",
+    "week_short": "Wk"
+  },
+  "Statistics": {
+    "statistics": "Statistics",
+    "soon": "Coming soon"
+  },
+  "Setting": {
+    "setting": "Settings",
+    "avatar_alt": "User avatar",
+    "change_avatar": "Change avatar",
+    "upload_photo": "Upload photo",
+    "username": "Username",
+    "email": "Email",
+    "new_password": "New password",
+    "password_placeholder": "Leave blank to keep your current password",
+    "pending_email": "Awaiting confirmation: {{email}}. Check your inboxes for both email addresses.",
+    "save_changes": "Save changes",
+    "log_out": "Log out",
+    "avatar_upload_success": "Avatar uploaded successfully",
+    "avatar_upload_failed": "Failed to upload avatar"
+  },
+  "Nav": {
+    "dashboard": "Dashboard",
+    "habits": "Habits",
+    "statistics": "Statistics",
+    "setting": "Settings",
+    "log_out": "Log out"
+  },
+  "LogOut": {
+    "log_out_?": "Log out of your account?",
+    "confirm": "Yes",
+    "cancel": "Cancel"
   }
 }

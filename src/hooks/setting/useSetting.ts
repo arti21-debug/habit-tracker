@@ -1,6 +1,7 @@
 "use client";
 import { getAvatar, getUser, uploadAvatar } from "@/lib/profiles";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 
 export default function useSetting() {
@@ -11,14 +12,16 @@ export default function useSetting() {
 
   const queryClient = useQueryClient();
 
+  const t = useTranslations("Setting");
+
   // изменение аватара юзера
   const { mutate } = useMutation({
     mutationFn: (file: File) => uploadAvatar(user!.id, file),
     onError: () => {
-      toast.error("Аватар не удалось загрузить");
+      toast.error(t("avatar_upload_failed"));
     },
     onSuccess: () => {
-      toast.success("Аватар успешно загружен");
+      toast.success(t("avatar_upload_success"));
       queryClient.invalidateQueries({ queryKey: ["avatars", user?.id] });
     },
   });
