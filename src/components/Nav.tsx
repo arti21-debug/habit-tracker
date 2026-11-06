@@ -10,10 +10,13 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import LogOutModal from "./LogoutModal";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 export default function Nav() {
   const [isExitModalActive, setIsExitModalActive] = useState(false);
   const pathname = usePathname();
+
+  const t = useTranslations("Nav");
 
   return (
     <>
@@ -27,7 +30,7 @@ export default function Nav() {
               color="#ffffff"
               className="shrink-0 max-[1055px]:hidden"
             />
-            <span className="max-[1024px]:text-sm">Дашборд</span>
+            <span className="max-[1024px]:text-sm">{t("dashboard")}</span>
           </Link>
           <Link
             href="/habits"
@@ -37,7 +40,7 @@ export default function Nav() {
               color="#ffffff"
               className="shrink-0 max-[1055px]:hidden"
             />
-            <span className="max-[1024px]:text-sm">Привычки</span>
+            <span className="max-[1024px]:text-sm">{t("habits")}</span>
           </Link>
           <Link
             href="/statistics"
@@ -47,7 +50,7 @@ export default function Nav() {
               color="#ffffff"
               className="shrink-0 max-[1055px]:hidden"
             />
-            <span className="max-[1024px]:text-sm">Статистика</span>
+            <span className="max-[1024px]:text-sm">{t("statistics")}</span>
           </Link>
           <Link
             href="/setting"
@@ -57,7 +60,7 @@ export default function Nav() {
               color="#ffffff"
               className="shrink-0 max-[1055px]:hidden"
             />
-            <span className="max-[1024px]:text-sm">Настройки</span>
+            <span className="max-[1024px]:text-sm">{t("setting")}</span>
           </Link>
           <div className="w-full h-px border border-border"></div>
           <button
@@ -65,7 +68,7 @@ export default function Nav() {
             className={`relative flex items-center mx-4 py-2.5 px-4 ${pathname === "/logout" && "bg-surface-muted border border-border"} rounded-lg whitespace-nowrap gap-6.5 max-[1055px]:justify-center`}
           >
             <LogOut color="#ffffff" className="shrink-0 max-[1055px]:hidden" />
-            <span className="max-[1024px]:text-sm">Выйти</span>
+            <span className="max-[1024px]:text-sm">{t("log_out")}</span>
           </button>
         </div>
       </nav>

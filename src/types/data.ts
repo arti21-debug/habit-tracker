@@ -11,6 +11,8 @@ export interface Completion {
   created_at: string;
 }
 
+export type EditHabitFormData = Required<Habit> & { id: string };
+
 export interface EditHabit {
   id?: string;
   name?: string;
@@ -21,6 +23,8 @@ export interface EditHabit {
   frequency?: string;
   days?: string[];
 }
+
+export type HabitFormData = Required<Habit>;
 
 export interface Habit {
   name: string;

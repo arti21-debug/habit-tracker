@@ -94,5 +94,170 @@
     "notReceived": "Не получили письмо?",
     "spam": "Проверьте папку «Спам».",
     "backToLogin": "Вернуться ко входу"
+  },
+  "Dashboard": {
+    "hello": "Привет",
+    "today": "Сегодня",
+    "from": "из",
+    "year_activity": "Активность за год",
+    "less": "меньше",
+    "more": "больше",
+    "Stats": {
+      "TotalHabits": {
+        "label": "Всего привычек",
+        "sub": "активных"
+      },
+      "CompletedToday": {
+        "label": "Выполнено сегодня"
+      },
+      "BestStreak": {
+        "label": "Лучший streak",
+        "sub": "дней подряд"
+      },
+      "CompletedByMonth": {
+        "label": "за месяц",
+        "sub": "выполнение"
+      }
+    }
+  },
+  "CreateHabit": {
+    "title": "Новая привычка",
+    "name": "Название",
+    "namePlaceholder": "Например: Утренняя пробежка",
+    "description": "Описание",
+    "descriptionPlaceholder": "Необязательно",
+    "icon": "Иконка",
+    "color": "Цвет",
+    "category": "Категория",
+    "frequency": "Частота",
+    "daily": "Ежедневно",
+    "weekly": "По дням недели",
+    "daysOfWeek": "Дни недели",
+    "categories": {
+      "health": "Здоровье",
+      "sport": "Спорт",
+      "education": "Образование",
+      "productivity": "Продуктивность"
+    },
+    "days": {
+      "mon": "Пн",
+      "tue": "Вт",
+      "wed": "Ср",
+      "thu": "Чт",
+      "fri": "Пт",
+      "sat": "Сб",
+      "sun": "Вс"
+    },
+    "cancel": "Отмена",
+    "create": "Создать привычку",
+    "createFailed": "Не удалось добавить привычку. Попробуйте ещё раз.",
+    "created": "Привычка добавленна"
+  },
+  "HabitDelete": {
+    "confirm_del?": "Уверены что хотите удалить привычку?",
+    "confirm": "Да",
+    "cancel": "Отмена"
+  },
+  "HabitHeader": {
+    "my_habits": "Мои привычки",
+    "add_habit": "Добавить привычку",
+    "add_habit_sm": "Добавить"
+  },
+  "Habits": {
+    "Categories": {
+      "all": "Все",
+      "health": "Здоровье",
+      "sport": "Спорт",
+      "education": "Образование",
+      "productivity": "Продуктивность",
+      "active": "Активные",
+      "archive": "Архив"
+    }
+  },
+  "Habit": {
+    "open": "Открыть",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "archive": "Архивировать",
+    "unzip": "Разархивировать",
+    "month": "Месяц",
+    "today": "Сегодня",
+    "done": "Выполнена",
+    "not_completed": "Нет"
+  },
+  "EditHabit": {
+    "title": "Редактирование привычки",
+    "edit": "Изменить",
+    "loadFailed": "Не удалось загрузить привычку. Попробуйте ещё раз.",
+    "updated": "Привычка изменена",
+    "updateFailed": "Не удалось изменить привычку"
+  },
+  "HabitId": {
+    "back": "Назад",
+    "edit": "Изменить",
+    "delete": "Удалить привычку",
+    "from": "с",
+    "done_mark": "Отметить выполненой",
+    "done_cancel": "Отменить",
+    "Stats": {
+      "CurrentStreak": {
+        "label": "Текущий streak",
+        "sub": "дней"
+      },
+      "BestStreak": {
+        "label": "Лучший streak",
+        "sub": "дней"
+      },
+      "TotalCompleted": {
+        "label": "Всего выполнено",
+        "sub": "дней"
+      },
+      "ForMonth": {
+        "label": "За 30 дней",
+        "sub": "выполнение"
+      }
+    },
+    "completion_schedule": "Календарь выполнений",
+    "mark": "Отметить",
+    "cancel": "Отменить",
+    "done": "Выполнено",
+    "not_completed": "Не выполнено"
+  },
+  "WeekStat": {
+    "week": "Неделя",
+    "completed": "выполнено",
+    "completion_by_weeks": "Выполнение по неделям",
+    "week_short": "Нед"
+  },
+  "Statistics": {
+    "statistics": "Статистика",
+    "soon": "Скоро"
+  },
+  "Setting": {
+    "setting": "Настройки",
+    "avatar_alt": "Аватар пользователя",
+    "change_avatar": "Изменить аватар",
+    "upload_photo": "Загрузить фото",
+    "username": "Имя пользователя",
+    "email": "Email",
+    "new_password": "Новый пароль",
+    "password_placeholder": "Оставьте пустым, чтобы не менять",
+    "pending_email": "Ожидает подтверждения: {email}. Откройте письма на обоих адресах.",
+    "save_changes": "Сохранить изменения",
+    "log_out": "Выйти",
+    "avatar_upload_success": "Аватар успешно загружен",
+    "avatar_upload_failed": "Не удалось загрузить аватар"
+  },
+  "Nav": {
+    "dashboard": "Дашборд",
+    "habits": "Привычки",
+    "statistics": "Статистика",
+    "setting": "Настройки",
+    "log_out": "Выйти"
+  },
+  "LogOut": {
+    "log_out_?": "Выйти из учетной записи?",
+    "confirm": "Да",
+    "cancel": "Отмена"
   }
 }

@@ -89,5 +89,170 @@
     "notReceived": "Не отримали листа?",
     "spam": "Перевірте папку «Спам».",
     "backToLogin": "Повернутися до входу"
+  },
+  "Dashboard": {
+    "hello": "Привіт",
+    "today": "Сьогодні",
+    "from": "з",
+    "year_activity": "Активність за рік",
+    "less": "менше",
+    "more": "більше",
+    "Stats": {
+      "TotalHabits": {
+        "label": "Усього звичок",
+        "sub": "активних"
+      },
+      "CompletedToday": {
+        "label": "Виконано сьогодні"
+      },
+      "BestStreak": {
+        "label": "Найкраща серія",
+        "sub": "днів поспіль"
+      },
+      "CompletedByMonth": {
+        "label": "за місяць",
+        "sub": "виконання"
+      }
+    }
+  },
+  "CreateHabit": {
+    "title": "Нова звичка",
+    "name": "Назва",
+    "nameRequired": "Назва *",
+    "namePlaceholder": "Наприклад: Ранкова пробіжка",
+    "description": "Опис",
+    "descriptionPlaceholder": "Необов'язково",
+    "icon": "Іконка",
+    "color": "Колір",
+    "category": "Категорія",
+    "frequency": "Частота",
+    "daily": "Щодня",
+    "weekly": "За днями тижня",
+    "daysOfWeek": "Дні тижня",
+    "categories": {
+      "health": "Здоров'я",
+      "sport": "Спорт",
+      "education": "Освіта",
+      "productivity": "Продуктивність"
+    },
+    "days": {
+      "mon": "Пн",
+      "tue": "Вт",
+      "wed": "Ср",
+      "thu": "Чт",
+      "fri": "Пт",
+      "sat": "Сб",
+      "sun": "Нд"
+    },
+    "cancel": "Скасувати",
+    "create": "Створити звичку",
+    "createFailed": "Не вдалося додати звичку. Спробуйте ще раз."
+  },
+  "HabitDelete": {
+    "confirm_del?": "Ви впевнені, що хочете видалити звичку?",
+    "confirm": "Так",
+    "cancel": "Скасувати"
+  },
+  "HabitHeader": {
+    "my_habits": "Мої звички",
+    "add_habit": "Додати звичку",
+    "add_habit_sm": "Додати"
+  },
+  "Habits": {
+    "Categories": {
+      "all": "Усі",
+      "health": "Здоров'я",
+      "sport": "Спорт",
+      "education": "Освіта",
+      "productivity": "Продуктивність",
+      "active": "Активні",
+      "archive": "Архів"
+    }
+  },
+  "Habit": {
+    "open": "Відкрити",
+    "edit": "Редагувати",
+    "delete": "Видалити",
+    "archive": "Архівувати",
+    "unzip": "Розархівувати",
+    "month": "Місяць",
+    "today": "Сьогодні",
+    "done": "Виконана",
+    "not_completed": "Ні"
+  },
+  "EditHabit": {
+    "title": "Редагування звички",
+    "edit": "Змінити",
+    "loadFailed": "Не вдалося завантажити звичку. Спробуйте ще раз.",
+    "updated": "Звичку змінено",
+    "updateFailed": "Не вдалося змінити звичку"
+  },
+  "HabitId": {
+    "back": "Назад",
+    "edit": "Змінити",
+    "delete": "Видалити звичку",
+    "from": "з",
+    "done_mark": "Позначити виконаною",
+    "done_cancel": "Скасувати",
+    "Stats": {
+      "CurrentStreak": {
+        "label": "Поточна серія",
+        "sub": "днів"
+      },
+      "BestStreak": {
+        "label": "Найкраща серія",
+        "sub": "днів"
+      },
+      "TotalCompleted": {
+        "label": "Усього виконано",
+        "sub": "днів"
+      },
+      "ForMonth": {
+        "label": "За 30 днів",
+        "sub": "виконання"
+      }
+    },
+    "completion_schedule": "Календар виконання",
+    "mark": "Позначити",
+    "cancel": "Скасувати",
+    "done": "Виконано",
+    "not_completed": "Не виконано"
+  },
+  "WeekStat": {
+    "week": "Тиждень",
+    "completed": "виконано",
+    "completion_by_weeks": "Виконання за тижнями",
+    "week_short": "Тиж"
+  },
+  "Statistics": {
+    "statistics": "Статистика",
+    "soon": "Незабаром"
+  },
+  "Setting": {
+    "setting": "Налаштування",
+    "avatar_alt": "Аватар користувача",
+    "change_avatar": "Змінити аватар",
+    "upload_photo": "Завантажити фото",
+    "username": "Ім'я користувача",
+    "email": "Email",
+    "new_password": "Новий пароль",
+    "password_placeholder": "Залиште порожнім, щоб не змінювати",
+    "pending_email": "Очікує підтвердження: {{email}}. Перевірте листи на обох адресах.",
+    "save_changes": "Зберегти зміни",
+    "log_out": "Вийти",
+    "avatar_upload_success": "Аватар успішно завантажено",
+    "avatar_upload_failed": "Не вдалося завантажити аватар"
+  },
+  "Nav": {
+    "dashboard": "Головна",
+    "habits": "Звички",
+    "statistics": "Статистика",
+    "setting": "Налаштування",
+    "log_out": "Вийти"
+  },
+  "LogOut": {
+    "log_out_?": "Вийти з облікового запису?",
+    "confirm": "Так",
+    "cancel": "Скасувати"
   }
 }

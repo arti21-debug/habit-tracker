@@ -3,6 +3,7 @@ import LogOutModal from "@/components/LogoutModal";
 import useSetting from "@/hooks/setting/useSetting";
 import useSettingForm from "@/hooks/setting/useSettingForm";
 import { Camera, LogOut } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 
 const inputClass =
@@ -32,6 +33,8 @@ export default function Setting() {
   // у Google-пользователей пароля нет, им блок не показываем
   const canChangePassword = user?.app_metadata.provider === "email";
 
+  const t = useTranslations("Setting");
+
   return (
     <div className="min-h-screen bg-bg">
       <form
@@ -52,7 +55,7 @@ export default function Setting() {
               {avatarUrl ? (
                 <img
                   src={avatarUrl}
-                  alt="Аватар пользователя"
+                  alt={t("avatar_alt")}
                   className="w-full h-full rounded-full object-cover"
                 />
               ) : (
@@ -62,7 +65,7 @@ export default function Setting() {
             <button
               onClick={() => fileInputRef.current?.click()}
               type="button"
-              aria-label="Изменить аватар"
+              aria-label={t("change_avatar")}
               className="absolute bottom-0 right-0 w-6 h-6 rounded-full flex items-center justify-center bg-primary text-white border-2 border-bg"
             >
               <Camera size={12} />
@@ -94,7 +97,7 @@ export default function Setting() {
               type="button"
               className="self-start px-4 py-2 rounded-lg text-xs text-text-primary bg-transparent border border-border-hover"
             >
-              Загрузить фото
+              {t("upload_photo")}
             </button>
           </div>
         </div>
@@ -105,7 +108,7 @@ export default function Setting() {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
             <label className="text-xs text-text-secondary">
-              Имя пользователя
+              {t("username")}
             </label>
             <input
               onChange={(e) => setNewUsername(e.target.value)}
@@ -116,7 +119,7 @@ export default function Setting() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs text-text-secondary">Email</label>
+            <label className="text-xs text-text-secondary">{t("email")}</label>
             <input
               onChange={(e) => setNewEmail(e.target.value)}
               type="email"
@@ -124,17 +127,14 @@ export default function Setting() {
               className={inputClass}
             />
             {user?.new_email && (
-              <p className="text-xs text-text-muted">
-                Ожидает подтверждения: {user.new_email}. Откройте письма на
-                обоих адресах.
-              </p>
+              <p className="text-xs text-text-muted">{t("pending_email", {email: user.new_email})}</p>
             )}
           </div>
 
           {canChangePassword && (
             <div className="flex flex-col gap-1.5">
               <label className="text-xs text-text-secondary">
-                Новый пароль
+                {t("new_password")}
               </label>
               <input
                 type="password"
@@ -142,7 +142,7 @@ export default function Setting() {
                 onChange={(e) => setNewPassword(e.target.value)}
                 minLength={8}
                 autoComplete="new-password"
-                placeholder="Оставьте пустым, чтобы не менять"
+                placeholder={t("password_placeholder")}
                 className={inputClass}
               />
             </div>
@@ -156,7 +156,7 @@ export default function Setting() {
             disabled={!hasChanges || isPending || newUsername.trim() === ""}
             className="flex-1 py-3 text-sm rounded-lg text-text-primary bg-bg border border-border-hover disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Сохранить изменения
+            {t("save_changes")}
           </button>
           <button
             onClick={() => setIsExitModalActive(true)}
@@ -164,7 +164,7 @@ export default function Setting() {
             className="flex items-center gap-2 px-4 py-3 text-sm rounded-lg text-danger bg-transparent border border-danger"
           >
             <LogOut size={14} />
-            Выйти
+            {t("log_out")}
           </button>
         </div>
       </form>

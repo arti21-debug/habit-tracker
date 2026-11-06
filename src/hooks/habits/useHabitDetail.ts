@@ -8,6 +8,7 @@ import {
 import { getUser, getUserTimezone } from "@/lib/profiles";
 import { ServerHabit } from "@/types/data";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useLocale } from "next-intl";
 
 type UpdateHabitStatus = {
   habitId: string;
@@ -58,9 +59,11 @@ export default function useHabitDetail(id: string) {
     queryFn: getUserTimezone,
   });
 
+  const locale = useLocale();
+
   // форматирование time_zone в формат строчной даты
   const date = profile
-    ? new Intl.DateTimeFormat("en-CA", {
+    ? new Intl.DateTimeFormat(locale, {
         timeZone: profile.time_zone,
         year: "numeric",
         month: "2-digit",
@@ -103,7 +106,7 @@ export default function useHabitDetail(id: string) {
     completions?.slice(-1)[0]?.completion_date,
   );
   const startDay = firstTimeHabitComplete.getDate();
-  const startMonth = firstTimeHabitComplete.toLocaleDateString("ru-RU", {
+  const startMonth = firstTimeHabitComplete.toLocaleDateString(locale, {
     month: "long",
   });
   const capitalizedMonth = startMonth[0].toUpperCase() + startMonth.slice(1);
@@ -111,13 +114,13 @@ export default function useHabitDetail(id: string) {
 
   // месяца отображаемых привычек, от и до и год относительно последней
   const monthFrom = new Date(dates.slice(-1)[0]?.dateString).toLocaleDateString(
-    "ru-RU",
+    locale,
     {
       month: "long",
     },
   );
   const monthTo = new Date(dates.slice(0)[0]?.dateString).toLocaleDateString(
-    "ru-RU",
+    locale,
     {
       month: "long",
     },

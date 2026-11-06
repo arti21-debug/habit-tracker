@@ -61,8 +61,8 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
 
   return (
     <main className="flex items-center justify-center h-screen">
-      <article className="flex flex-col items-center w-100 p-8 rounded-2xl bg-surface border border-border max-[1024px]:w-85">
-        <div className="flex justify-end w-full">
+      <article className="relative flex flex-col items-center w-100 p-8 rounded-2xl bg-surface border border-border max-[1024px]:w-85">
+        <div className="absolute top-2 right-2 flex justify-end w-full">
           <LanguageSwitcher />
         </div>
         <div className="flex items-center gap-3">

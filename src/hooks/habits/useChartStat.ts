@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import useHabitDetail from "./useHabitDetail";
 
 export default function useChartStat(habitId: string) {
@@ -23,6 +24,8 @@ export default function useChartStat(habitId: string) {
     completions?.map((comp) => comp.completion_date),
   );
 
+  const t = useTranslations("WeekStat");
+
   // рассчитываем процент выполнений для каждой недели
   const weeksStat = weekGroups.map((group, i) => {
     const weekCompletions = group.filter(
@@ -30,7 +33,7 @@ export default function useChartStat(habitId: string) {
     );
 
     return {
-      label: `Нед ${i + 1}`,
+      label: `${t("week_short")} ${i + 1}`,
       percent: Math.round((weekCompletions.length / group.length) * 100), // процент выполненных за неделю
     };
   });

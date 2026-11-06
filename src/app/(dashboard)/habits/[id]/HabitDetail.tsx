@@ -9,6 +9,8 @@ import { useState } from "react";
 import WeekStatChart from "./WeekStatChart";
 import getBestHabitStreak from "@/utils/getBestHabitStreak";
 import getCurrentHabitStreak from "@/utils/getCurrentHabitSreak";
+import { useTranslations } from "next-intl";
+import { useHabitLabels } from "@/hooks/habits/useHabitLabels";
 
 export default function HabitDetail({ id }: { id: string }) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -43,8 +45,13 @@ export default function HabitDetail({ id }: { id: string }) {
     completions?.map((comp) => comp.completion_date),
   );
 
-  if (!habit) return;
+  const t = useTranslations("HabitId");
+  const tStats = useTranslations("HabitId.Stats");
+  const tDays = useTranslations("CreateHabit.days");
+  const labels = useHabitLabels();
 
+  if (!habit) return;
+  
   if (isLoading)
     return (
       <div className="flex items-center justify-center pt-20">
@@ -72,7 +79,7 @@ export default function HabitDetail({ id }: { id: string }) {
               border: "1px solid var(--color-border)",
             }}
           >
-            ← Назад
+            ← {t("back")}
           </button>
           <div className="flex items-center gap-2">
             <button
@@ -83,7 +90,7 @@ export default function HabitDetail({ id }: { id: string }) {
                 border: "1px solid var(--color-border)",
               }}
             >
-              ✏️ Изменить
+              ✏️ {t("edit")}
             </button>
             <button
               onClick={() => setIsDelModalActive(true)}
@@ -92,7 +99,7 @@ export default function HabitDetail({ id }: { id: string }) {
                 color: "var(--color-danger)",
                 border: "1px solid var(--color-danger)",
               }}
-              aria-label="Удалить привычку"
+              aria-label={t("delete")}
             >
               <Trash color="#d01111" size={20} />
             </button>
@@ -121,7 +128,7 @@ export default function HabitDetail({ id }: { id: string }) {
               >
                 {!startDay || !capitalizedMonth
                   ? habit.category
-                  : `${habit.category} · ${habit.frequency[0].toLowerCase() + habit.frequency.slice(1)} · с ${startDay} ${capitalizedMonth} ${startYear}`}
+                  : `${labels.category(habit.category)} · ${labels.frequency(habit.frequency)} · ${t("from")} ${startDay} ${capitalizedMonth} ${startYear}`}
               </p>
             </div>
           </div>
@@ -145,7 +152,11 @@ export default function HabitDetail({ id }: { id: string }) {
               border: "1px solid transparent",
             }}
           >
-            {isDone ? <div>✗ Отменить</div> : <div>✓ Отметить выполненной</div>}
+            {isDone ? (
+              <div>✗ {t("done_mark")}</div>
+            ) : (
+              <div>✓ {t("done_cancel")}</div>
+            )}
           </button>
         </div>
       </div>
@@ -155,17 +166,25 @@ export default function HabitDetail({ id }: { id: string }) {
         {/* Stats */}
         <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
           {[
-            { label: "Текущий streak", value: `🔥 ${streak}`, sub: "дней" },
-            { label: "Лучший streak", value: `${bestStreak}`, sub: "дней" },
             {
-              label: "Всего выполнено",
-              value: `${totalCompletions}`,
-              sub: "дней",
+              label: `${tStats("CurrentStreak.label")}`,
+              value: `🔥 ${streak}`,
+              sub: `${tStats("CurrentStreak.sub")}`,
             },
             {
-              label: "За 30 дней",
+              label: `${tStats("BestStreak.label")}`,
+              value: `${bestStreak}`,
+              sub: `${tStats("BestStreak.sub")}`,
+            },
+            {
+              label: `${tStats("TotalCompleted.label")}`,
+              value: `${totalCompletions}`,
+              sub: `${tStats("TotalCompleted.sub")}`,
+            },
+            {
+              label: `${tStats("ForMonth.label")}`,
               value: `${lastMonthRate}%`,
-              sub: "выполнение",
+              sub: `${tStats("ForMonth.sub")}`,
             },
           ].map((stat) => (
             <div
@@ -211,7 +230,7 @@ export default function HabitDetail({ id }: { id: string }) {
               className="text-sm font-medium mb-4"
               style={{ color: "var(--color-text-primary)" }}
             >
-              Календарь выполнений
+              {t("completion_schedule")}
             </h2>
             <div className="flex gap-2">
               <h2>{`${capitalizedMonthFrom} — ${capitalizedMonthTo}`}</h2>
@@ -221,7 +240,15 @@ export default function HabitDetail({ id }: { id: string }) {
 
           {/* Day labels */}
           <div className="grid grid-cols-7 gap-1.5 mb-1">
-            {["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"].map((d) => (
+            {[
+              tDays("mon"),
+              tDays("tue"),
+              tDays("wed"),
+              tDays("thu"),
+              tDays("fri"),
+              tDays("sat"),
+              tDays("sun"),
+            ].map((d) => (
               <div
                 key={d}
                 className="text-center text-xs"
@@ -265,7 +292,7 @@ export default function HabitDetail({ id }: { id: string }) {
                     {isDone ? (
                       <>
                         <span className="text-danger max-[700px]:text-xs max-[580px]:hidden">
-                          Отменить <br /> {date.dateString}
+                          {t("cancel")} <br /> {date.dateString}
                         </span>
                         <span className="hidden text-danger text-lg max-[580px]:block">
                           ✗
@@ -274,7 +301,7 @@ export default function HabitDetail({ id }: { id: string }) {
                     ) : (
                       <>
                         <span className="text-success max-[700px]:text-xs max-[580px]:hidden">
-                          Отметить <br /> {date.dateString}
+                          {t("mark")} <br /> {date.dateString}
                         </span>
                         <span className="hidden text-success text-lg max-[580px]:block">
                           ✓
@@ -300,7 +327,7 @@ export default function HabitDetail({ id }: { id: string }) {
               className="text-xs"
               style={{ color: "var(--color-text-muted)" }}
             >
-              Не выполнено
+              {t("not_completed")}
             </span>
             <div
               className="w-3 h-3 rounded-sm ml-2"
@@ -310,7 +337,7 @@ export default function HabitDetail({ id }: { id: string }) {
               className="text-xs"
               style={{ color: "var(--color-text-muted)" }}
             >
-              Выполнено
+              {t("done")}
             </span>
           </div>
         </div>

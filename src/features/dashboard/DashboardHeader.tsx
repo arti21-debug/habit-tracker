@@ -1,5 +1,6 @@
 "use client";
 import BurgNav from "@/components/BurgNav";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Bell, Activity } from "lucide-react";
 import Link from "next/link";
 
@@ -27,7 +28,7 @@ export default function DashboardHeader({ username }: Props) {
                 className="absolute inset-0 m-auto max-[1024px]:w-5"
               />
             </div>
-            <h1 className="font-bold text-xl max-[1024px]:text-lg">
+            <h1 className="font-bold text-xl max-[1024px]:text-lg max-[520px]:hidden">
               HabitFlow
             </h1>
           </div>
@@ -35,7 +36,10 @@ export default function DashboardHeader({ username }: Props) {
 
         {/* Кнопки в зоне main */}
         <div className="flex-1 min-w-0 flex items-center justify-end gap-4">
-          <button className="relative w-10 max-[1024px]:w-7 max-[1024px]:h-7">
+          <div className="flex justify-end">
+            <LanguageSwitcher />
+          </div>
+          <button className="relative w-10 max-[1024px]:w-7 max-[1024px]:h-7 max-[520px]:hidden">
             <Bell
               color="#b4b1b1"
               size={25}
@@ -44,7 +48,7 @@ export default function DashboardHeader({ username }: Props) {
           </button>
           <Link
             href="/setting"
-            className="flex items-center justify-center w-12.5 h-12.5 rounded-full bg-primary max-[1024px]:w-10 max-[1024px]:h-10"
+            className="flex items-center justify-center w-12.5 h-12.5 rounded-full bg-primary max-[1024px]:w-10 max-[1024px]:h-10 max-[520px]:hidden"
           >
             <div className="text-lg">{usernameSliced}</div>
           </Link>
