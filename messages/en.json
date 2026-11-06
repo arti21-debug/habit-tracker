@@ -259,5 +259,24 @@
     "log_out_?": "Log out of your account?",
     "confirm": "Yes",
     "cancel": "Cancel"
+  },
+  "Demo": {
+    "title": "Demo Data",
+    "description": "Creates 6 habits with completion history for the last 3 months, allowing you to explore statistics, streaks, and the calendar without manual input.",
+    "create": "Load demo data",
+    "creating": "Creating…",
+    "clear": "Delete demo data",
+    "created": "Demo data added",
+    "cleared": "Demo data deleted",
+    "createFailed": "Failed to create demo data",
+    "clearFailed": "Failed to delete demo data",
+    "habits": {
+      "meditation": "Meditation",
+      "run": "Morning run",
+      "reading": "Read for 30 minutes",
+      "water": "Drink water",
+      "gym": "Gym workout",
+      "sleep": "Go to bed before 11 PM"
+    }
   }
 }
