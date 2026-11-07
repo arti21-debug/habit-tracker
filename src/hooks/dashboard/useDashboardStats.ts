@@ -2,9 +2,9 @@
 import { getHabitsWithCompletions } from "@/lib/completions";
 import { getHabits } from "@/lib/habits";
 import { getUser, getUserTimezone } from "@/lib/profiles";
-import { Completion, HabitWithCompletions } from "@/types/data";
+import { HabitWithCompletions } from "@/types/data";
 import getBestHabitStreak from "@/utils/getBestHabitStreak";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useLocale } from "next-intl";
 
 const daysMap: Record<string, number> = {
@@ -37,11 +37,17 @@ export default function useDashboardStats() {
   // возвращаем айди привычек для дальнейшего получения ихних completions
   const habitIds = habits?.map((habit) => habit.id) ?? [];
 
-  const { data: habitsWithCompletions = [] } = useQuery({
-    queryKey: ["habits-with-completions", habitIds],
-    queryFn: () => getHabitsWithCompletions(habitIds),
-    enabled: habitIds.length > 0,
-  });
+  const { data: habitsWithCompletions = [], isSuccess: completionsLoaded } =
+    useQuery({
+      queryKey: ["habits-with-completions", habitIds],
+      queryFn: () => getHabitsWithCompletions(habitIds),
+      enabled: habitIds.length > 0,
+      placeholderData: keepPreviousData, // чтобы сетка не мигала при добавлении привычки
+    });
+
+  // данные готовы: привычки загружены, а их выполнения либо пришли, либо привычек нет
+  const isActivityReady =
+    !!habits && (habitIds.length === 0 || completionsLoaded);
 
   const locale = useLocale();
 
@@ -54,6 +60,9 @@ export default function useDashboardStats() {
   const date = now.getDate();
   const month = now.toLocaleDateString(locale, { month: "long" });
   const year = now.getFullYear();
+
+  const toISO = (d: Date) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
   // вычисляем общий процент выполнений привычек за текущий месяц
   function getCurrentMonthCompletionRate(habits: HabitWithCompletions[]) {
@@ -101,12 +110,12 @@ export default function useDashboardStats() {
     allBestStreaks.length > 0 ? Math.max(...allBestStreaks) : 0;
 
   const day = new Date().getDay();
-  const todayDate = new Date().toLocaleDateString("en-CA");
+  const todayDate = toISO(new Date);
 
   // фильтруем привычки которые выполняются в текущий день недели
   const habitsToday = habitsWithCompletions?.filter((habit) => {
     if (!habit.days || habit.days.length === 0) return habit;
-    habit.days.filter((d) => daysMap[d] === day);
+    return habit.days.filter((d) => daysMap[d] === day);
   });
 
   // находим сегодняшние привычки которые уже выполнены
@@ -143,7 +152,7 @@ export default function useDashboardStats() {
       let currCompletions = 0; // счетчик выполненных привычек за текущий день
       habitsWithCompletions.forEach((comp) => {
         const habitComps = comp.completions.filter(
-          (c) => c.completion_date === currDate.toLocaleDateString("en-CA"),
+          (c) => c.completion_date === toISO(currDate),
         ); // у каждой привычки проходимся по completions и собираем совпавшие с текущей датой
 
         currCompletions += habitComps.length; // добавляем выполненные
@@ -155,9 +164,8 @@ export default function useDashboardStats() {
       currDate.setDate(currDate.getDate() + 1);
     }
 
-    // console.log(daysActivity.toReversed());
     // вернем активность в обратном порядке
-    return daysActivity.toReversed();
+    return daysActivity.reverse();
   }
 
   return {
@@ -175,5 +183,6 @@ export default function useDashboardStats() {
     habitsWithCompletions,
     getCurrentMonthCompletionRate,
     lastYearActivityByDays,
+    isActivityReady,
   };
 }
