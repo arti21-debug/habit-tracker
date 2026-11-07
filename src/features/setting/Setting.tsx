@@ -183,12 +183,12 @@ export default function Setting() {
         </h3>
         <p className="text-xs text-text-muted">{tDemo("description")}</p>
 
-        <div className="flex gap-3">
+        <div className="flex gap-3 max-[400px]:flex-col">
           <button
             type="button"
             onClick={() => seed()}
             disabled={isSeeding || isClearing}
-            className="flex-1 py-3 text-sm rounded-lg text-text-primary bg-bg border border-border-hover disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 py-3 text-sm rounded-lg text-text-primary bg-bg border border-border-hover disabled:opacity-50 disabled:cursor-not-allowed max-[450px]:text-xs"
           >
             {isSeeding ? tDemo("creating") : tDemo("create")}
           </button>
@@ -196,7 +196,7 @@ export default function Setting() {
             type="button"
             onClick={() => clear()}
             disabled={isSeeding || isClearing}
-            className="px-4 py-3 text-sm rounded-lg text-danger bg-transparent border border-danger disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-3 text-sm rounded-lg text-danger bg-transparent border border-danger disabled:opacity-50 disabled:cursor-not-allowed max-[450px]:text-xs"
           >
             {tDemo("clear")}
           </button>

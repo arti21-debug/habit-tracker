@@ -32,10 +32,10 @@ export default function useHabitDetail(id: string) {
   const queryClient = useQueryClient();
 
   // Отметить/отменить
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: ({ habitId, date, isDone }: UpdateHabitStatus) =>
       isDone ? uncompleteHabit(habitId, date) : completeHabit(habitId, date),
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["completions"],
       });
@@ -63,7 +63,7 @@ export default function useHabitDetail(id: string) {
 
   // форматирование time_zone в формат строчной даты
   const date = profile
-    ? new Intl.DateTimeFormat(locale, {
+    ? new Intl.DateTimeFormat("en-CA", {
         timeZone: profile.time_zone,
         year: "numeric",
         month: "2-digit",
@@ -75,6 +75,8 @@ export default function useHabitDetail(id: string) {
   const isDone = completions?.some(
     (completion) => completion.completion_date === date,
   );
+
+  console.log(date);
 
   const today = new Date();
   const startDate = new Date(); // дата первой выполненной привычки внутри 3-мес промежутка
@@ -146,5 +148,6 @@ export default function useHabitDetail(id: string) {
     yearTo,
     startDate,
     profile,
+    isPending,
   };
 }

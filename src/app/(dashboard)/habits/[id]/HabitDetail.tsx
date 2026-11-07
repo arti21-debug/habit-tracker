@@ -31,6 +31,7 @@ export default function HabitDetail({ id }: { id: string }) {
     capitalizedMonthTo,
     yearTo,
     profile,
+    isPending,
   } = useHabitDetail(id);
 
   const { totalCompletions, lastMonthRate } = useHabitStats(habit?.id);
@@ -146,6 +147,7 @@ export default function HabitDetail({ id }: { id: string }) {
                 });
               }
             }}
+            disabled={isPending}
             className="shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium bg-primary transition duration-200 hover:bg-[#6d65dd] max-[570px]:px-3 max-[570px]:py-2 max-[570px]:text-xs"
             style={{
               color: "#fff",

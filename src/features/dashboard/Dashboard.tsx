@@ -1,7 +1,7 @@
 "use client";
 import useDashboardStats from "@/hooks/dashboard/useDashboardStats";
 import DashboardHabit from "./DashboardHabit";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 
 const activityColors: Record<number, string> = {
   0: "var(--color-surface-muted)",
@@ -27,10 +27,11 @@ export default function Dashboard() {
     habitsWithCompletions,
     getCurrentMonthCompletionRate,
     lastYearActivityByDays,
+    isActivityReady,
   } = useDashboardStats();
 
   const monthRate = getCurrentMonthCompletionRate(habitsWithCompletions);
-  const activity = lastYearActivityByDays();
+  const activity = isActivityReady ? lastYearActivityByDays() : [];
 
   const t = useTranslations("Dashboard");
   const tStats = useTranslations("Dashboard.Stats");
@@ -55,6 +56,7 @@ export default function Dashboard() {
         <p
           className="text-sm mt-1"
           style={{ color: "var(--color-text-muted)" }}
+          suppressHydrationWarning
         >
           {`${capitalizeWeekDay}, ${date} ${month} ${year}`}
         </p>
@@ -206,23 +208,30 @@ export default function Dashboard() {
             </span>
           </div>
         </div>
-
-        <div
-          className="grid gap-1"
-          style={{ gridTemplateColumns: "repeat(52, minmax(0, 1fr))" }}
-        >
-          {activity.map((level, i) => (
-            <div
-              key={i}
-              className="rounded-sm"
-              style={{
-                aspectRatio: "1",
-                background: activityColors[level] ?? activityColors[4],
-                border: level === 0 ? "1px solid var(--color-border)" : "none",
-              }}
-            />
-          ))}
-        </div>
+        {isActivityReady ? (
+          <div
+            className="grid gap-1"
+            style={{ gridTemplateColumns: "repeat(52, minmax(0, 1fr))" }}
+          >
+            {activity.map((level, i) => (
+              <div
+                key={i}
+                className="rounded-sm"
+                style={{
+                  aspectRatio: "1",
+                  background: activityColors[level] ?? activityColors[4],
+                  border:
+                    level === 0 ? "1px solid var(--color-border)" : "none",
+                }}
+              />
+            ))}
+          </div>
+        ) : (
+          <div
+            className="w-full rounded-md animate-pulse bg-surface-muted"
+            style={{ aspectRatio: "52 / 8" }} // примерная высота сетки, чтобы страница не прыгала
+          />
+        )}
       </div>
     </div>
   );
