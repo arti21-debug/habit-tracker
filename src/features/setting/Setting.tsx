@@ -6,6 +6,7 @@ import { Camera, LogOut } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import useDemoData from "../demo/useDemoData";
+import Image from "next/image";
 
 const inputClass =
   "w-full px-4 py-3 text-base rounded-lg outline-none transition-colors " +
@@ -57,9 +58,12 @@ export default function Setting() {
           <div className="relative shrink-0">
             <div className="w-20 h-20 rounded-full flex items-center justify-center text-2xl bg-primary-light text-[#3C3489]">
               {avatarUrl ? (
-                <img
+                <Image
                   src={avatarUrl}
                   alt={t("avatar_alt")}
+                  width={80}
+                  height={80}
+                  unoptimized // URL с ?v=timestamp для сброса кэша: оптимизатору Next он не нужен
                   className="w-full h-full rounded-full object-cover"
                 />
               ) : (

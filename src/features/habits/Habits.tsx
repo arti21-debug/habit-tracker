@@ -1,6 +1,5 @@
 "use client";
 import AddHabitModal from "./AddHabitModal";
-
 import useHabits from "@/hooks/habits/useHabits";
 import EditHabitModal from "./EditHabitModal";
 import { useState } from "react";
@@ -36,6 +35,8 @@ export default function Habits() {
     filteredHabits,
     isLoading,
     isError,
+    today,
+    timeZone,
   } = useHabits();
 
   const tCategories = useTranslations("Habits.Categories");
@@ -108,6 +109,8 @@ export default function Habits() {
           <Habit
             key={habit.id}
             habit={habit}
+            today={today}
+            timeZone={timeZone}
             setIsEditModalOpen={setIsEditModalOpen}
             setCurrHabit={setCurrHabit}
             setIsDelModalActive={setIsDelModalActive}

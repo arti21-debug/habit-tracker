@@ -1,7 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { updateUserTimezone } from "@/lib/profiles";
 import { useTranslations } from "next-intl";
 
 export default function useSignIn(
@@ -20,7 +19,7 @@ export default function useSignIn(
     setErrorLoginMsg(null);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email: email,
         password: password,
       });
@@ -40,7 +39,6 @@ export default function useSignIn(
       // успешная авторизация, переход на главную
       setLoginState("success");
       router.push("/dashboard");
-      updateUserTimezone(data.user.id);
     } catch (error) {
       // ошибка при проблемах с сетью
       console.error("Sign in failed:", error);

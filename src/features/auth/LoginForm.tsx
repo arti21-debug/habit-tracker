@@ -33,6 +33,7 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
     setResetPasswordPage,
     isReset,
     resetError,
+    isPending,
     resetRequest,
   } = useRequestToResetPassword();
 
@@ -97,10 +98,14 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
           >
             <div className="relative">
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-text-secondary max-[1024px]:text-xs">
+                <label
+                  className="text-sm font-medium text-text-secondary max-[1024px]:text-xs"
+                  htmlFor="email"
+                >
                   {t("email")}
                 </label>
                 <input
+                  id="email"
                   onChange={(e) => {
                     setSubmitError(null);
                     setErrorLoginMsg(null);
@@ -112,7 +117,10 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
                 />
               </div>
               <div className="flex flex-col pt-3 gap-1.5">
-                <label className="text-sm font-medium text-text-secondary max-[1024px]:text-xs">
+                <label
+                  className="text-sm font-medium text-text-secondary max-[1024px]:text-xs"
+                  htmlFor="password"
+                >
                   {t("password")}
                 </label>
                 <input
@@ -121,6 +129,7 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
                     setErrorLoginMsg(null);
                     setPassword(e.target.value);
                   }}
+                  id="password"
                   type="password"
                   className="h-9 rounded-lg border border-border p-4 transition duration-200 hover:border-border-hover max-[1024px]:h-8"
                 />
@@ -200,22 +209,35 @@ export default function LoginForm({ setActiveAuth }: LoginFormProps) {
               className={`${isReset ? "hidden" : "flex"} flex-col gap-y-4 w-full pt-5 max-[1024px]:gap-y-3.5`}
             >
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-text-secondary max-[1024px]:text-xs">
+                <label
+                  htmlFor="reset-email"
+                  className="text-sm font-medium text-text-secondary max-[1024px]:text-xs"
+                >
                   {tReset("email")}
                 </label>
                 <input
+                  id="reset-email"
                   type="email"
                   name="email"
+                  required
                   className="h-9 rounded-lg border border-border p-4 transition duration-200 hover:border-border-hover max-[1024px]:h-8"
                 />
                 {resetError && (
-                  <div className="text-sm font-medium max-[1024px]:text-xs text-red-600">
-                    {resetError}
+                  <div
+                    role="alert"
+                    className="text-sm font-medium max-[1024px]:text-xs text-red-600"
+                  >
+                    {tErrs(
+                      resetError === "invalid_email"
+                        ? "resetInvalidEmail"
+                        : "resetFailed",
+                    )}
                   </div>
                 )}
               </div>
               <button
                 type="submit"
+                disabled={isPending}
                 className="w-full p-2 h-10.5 mt-2 rounded-lg border border-border transition duration-200 hover:bg-surface-hover max-[1024px]:text-sm max-[1024px]:h-9.25 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {tReset("reset")}

@@ -26,7 +26,7 @@ export default async function DashboardLayout({
   const username = user.user_metadata?.username ?? "";
 
   return (
-    <Providers>
+    <Providers initialUser={user}>
       <HabitProvider>
         <Toaster position="bottom-right" />
         <div>

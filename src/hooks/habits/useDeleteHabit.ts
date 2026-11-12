@@ -1,29 +1,25 @@
 "use client";
 import { deleteHabit } from "@/lib/habits";
-import { getUser } from "@/lib/profiles";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 export default function useDeleteHabit(setIsDelModalActive: (val: boolean) => void) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  
-  // получение юзера
-  const { data: user } = useQuery({
-    queryKey: ["user"],
-    queryFn: getUser,
-  });
+
+  const t = useTranslations("HabitDelete");
 
   const { mutate, isPending } = useMutation({
     mutationFn: deleteHabit,
     onError: () => {
       setIsDelModalActive(false);
-      toast.error("Не удалось удалить привычку");
+      toast.error(t("error"));
     },
     onSuccess: () => {
       setIsDelModalActive(false);
-      toast.success("Привычка удалена");
+      toast.success(t("success"));
       // Говорим TanStack что кэш с ключом ["habits"] устарел
       // Он автоматически перезапрашивает getHabits()
       // Habits.tsx обновится сам без каких-либо действий с моей стороны

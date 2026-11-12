@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { updateUserTimezone } from "@/lib/profiles";
 import { useTranslations } from "next-intl";
 
 export default function useSignUp() {
@@ -23,7 +22,7 @@ export default function useSignUp() {
 
     try {
       // получение данных о сессии либо о ошибке
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -46,7 +45,6 @@ export default function useSignUp() {
 
       setRegisterState("success");
       setSuccessRegisterEmail(email);
-      if (data.user) updateUserTimezone(data.user.id);
     } catch (error) {
       // ошибка при проблемах с сетью
       console.error("Sign up failed:", error);

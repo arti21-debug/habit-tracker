@@ -4,12 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 export default function useHabitStats(habitId: string | undefined) {
-  useEffect(() => {
-    if (error) {
-      console.error("Ошибка получения выполнений:", error);
-    }
-  })
-
   // получение истории выполнения привычек
   const {
     data: completions,
@@ -23,10 +17,19 @@ export default function useHabitStats(habitId: string | undefined) {
     enabled: !!habitId,
   });
 
+  useEffect(() => {
+    if (error) {
+      console.error("Ошибка получения выполнений:", error);
+    }
+  }, [error]);
+
   function getLastMonthCompletionRate() {
-    const timestamp30DaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    const from = new Date();
+    from.setDate(from.getDate() - 29);
+    const fromDate = from.toLocaleDateString("en-CA");
+
     const lastMonthCompletions = completions?.filter(
-      (comp) => Date.parse(comp.completion_date) >= timestamp30DaysAgo,
+      (comp) => comp.completion_date >= fromDate,
     );
 
     const percent = ((lastMonthCompletions?.length ?? 0) / 30) * 100;

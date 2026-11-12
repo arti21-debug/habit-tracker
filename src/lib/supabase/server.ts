@@ -14,7 +14,7 @@ export async function createClient() {
         getAll() {
           return cookieStore.getAll();
         },
-        setAll(cookiesToSet, _headers) {
+        setAll(cookiesToSet) {
           try {
             // Записываем куки по одной
             cookiesToSet.forEach(({ name, value, options }) =>

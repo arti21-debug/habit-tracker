@@ -180,7 +180,7 @@ export async function seedDemoData(params: {
     .select("id");
 
   if (habitsError) throw habitsError;
-  if (!habits) throw new Error("Привычки не созданы");
+  if (!habits) throw new Error("Demo habits were not created");
 
   // 3. выполнения всех привычек: одним запросом (ids вернулись в порядке вставки)
   const completions = habits.flatMap((habit, i) =>

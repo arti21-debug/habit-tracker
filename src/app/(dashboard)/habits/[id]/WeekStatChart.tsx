@@ -17,6 +17,35 @@ type Props = {
   habitId: string;
 };
 
+type TooltipProps = {
+  active?: boolean;
+  payload?: { value?: number }[];
+  label?: string | number;
+};
+
+const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
+  const t = useTranslations("WeekStat");
+  if (!active || !payload?.length) return null;
+
+  return (
+    <div
+      className="px-3 py-2 rounded-lg text-xs"
+      style={{
+        background: "var(--color-surface)",
+        border: "1px solid var(--color-border)",
+        color: "var(--color-text-primary)",
+      }}
+    >
+      <p style={{ color: "var(--color-text-muted)" }}>
+        {t("week")} {String(label ?? "").slice(-2)}
+      </p>
+      <p className="font-medium mt-0.5">
+        {payload[0].value}% {t("completed")}
+      </p>
+    </div>
+  );
+};
+
 export default function WeekStatChart({ habitId }: Props) {
   const [isMobile, setIsMobile] = useState(
     window.matchMedia("(max-width: 840px)").matches,
@@ -33,26 +62,6 @@ export default function WeekStatChart({ habitId }: Props) {
   const { weeksStat } = useChartStat(habitId);
 
   const t = useTranslations("WeekStat");
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (!active || !payload?.length) return null;
-
-    return (
-      <div
-        className="px-3 py-2 rounded-lg text-xs"
-        style={{
-          background: "var(--color-surface)",
-          border: "1px solid var(--color-border)",
-          color: "var(--color-text-primary)",
-        }}
-      >
-        <p style={{ color: "var(--color-text-muted)" }}>
-          {t("week")} {label?.slice(-2)}
-        </p>
-        <p className="font-medium mt-0.5">{payload[0].value}% {t("completed")}</p>
-      </div>
-    );
-  };
 
   return (
     <div

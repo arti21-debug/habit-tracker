@@ -1,7 +1,6 @@
 "use client";
 import { useHabit } from "@/app/(dashboard)/habits/context/HabitContext";
 import { editHabitData, getHabitById } from "@/lib/habits";
-import { getUser } from "@/lib/profiles";
 import { ServerHabit } from "@/types/data";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
@@ -33,12 +32,6 @@ export default function useEditHabit(
 
   // состояние меню из контекста
   const { setOpenMenuId } = useHabit();
-
-  // получение юзера
-  const { data: user } = useQuery({
-    queryKey: ["user"],
-    queryFn: getUser,
-  });
 
   // получение привычки по id
   const {

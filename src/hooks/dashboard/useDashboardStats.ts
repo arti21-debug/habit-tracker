@@ -1,10 +1,9 @@
 "use client";
-import { getHabitsWithCompletions } from "@/lib/completions";
 import { getHabits } from "@/lib/habits";
 import { getUser, getUserTimezone } from "@/lib/profiles";
 import { HabitWithCompletions } from "@/types/data";
 import getBestHabitStreak from "@/utils/getBestHabitStreak";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useLocale } from "next-intl";
 
 const daysMap: Record<string, number> = {
@@ -29,25 +28,15 @@ export default function useDashboardStats() {
     queryFn: getUserTimezone,
   });
 
-  const { data: habits } = useQuery({
+  const { data: allHabits } = useQuery({
     queryKey: ["habits", user?.id],
     queryFn: getHabits,
   });
 
-  // возвращаем айди привычек для дальнейшего получения ихних completions
-  const habitIds = habits?.map((habit) => habit.id) ?? [];
+  const habits = allHabits?.filter((h) => !h.is_archived);
 
-  const { data: habitsWithCompletions = [], isSuccess: completionsLoaded } =
-    useQuery({
-      queryKey: ["habits-with-completions", habitIds],
-      queryFn: () => getHabitsWithCompletions(habitIds),
-      enabled: habitIds.length > 0,
-      placeholderData: keepPreviousData, // чтобы сетка не мигала при добавлении привычки
-    });
-
-  // данные готовы: привычки загружены, а их выполнения либо пришли, либо привычек нет
-  const isActivityReady =
-    !!habits && (habitIds.length === 0 || completionsLoaded);
+  const habitsWithCompletions = habits ?? [];
+  const isActivityReady = !!habits;
 
   const locale = useLocale();
 
@@ -110,13 +99,13 @@ export default function useDashboardStats() {
     allBestStreaks.length > 0 ? Math.max(...allBestStreaks) : 0;
 
   const day = new Date().getDay();
-  const todayDate = toISO(new Date);
+  const todayDate = toISO(new Date());
 
   // фильтруем привычки которые выполняются в текущий день недели
-  const habitsToday = habitsWithCompletions?.filter((habit) => {
-    if (!habit.days || habit.days.length === 0) return habit;
-    return habit.days.filter((d) => daysMap[d] === day);
-  });
+  const habitsToday = habitsWithCompletions?.filter(
+    (habit) =>
+      !habit.days?.length || habit.days.some((d) => daysMap[d] === day),
+  );
 
   // находим сегодняшние привычки которые уже выполнены
   const habitsCompletedToday =
@@ -141,14 +130,11 @@ export default function useDashboardStats() {
     today.setHours(0, 0, 0, 0);
     yearAgo.setHours(0, 0, 0, 0);
 
-    let dates = []; // все даты за годовалый промежуток
-    let currDate = new Date(yearAgo); // текущая дата итерации, начинается с yearAgo
+    const currDate = new Date(yearAgo); // текущая дата итерации, начинается с yearAgo
 
     const daysActivity: number[] = [];
 
     while (currDate <= today) {
-      dates.push(new Date(currDate)); // накапливаем даты
-
       let currCompletions = 0; // счетчик выполненных привычек за текущий день
       habitsWithCompletions.forEach((comp) => {
         const habitComps = comp.completions.filter(

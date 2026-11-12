@@ -14,7 +14,6 @@ export async function GET(request: NextRequest) {
   if (code) {
     // Обмениваем одноразовый код на полноценную сессию
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-    console.log("EXCHANGE CODE ERROR:", error);
 
     if (!error) {
       // Если пользователь пришёл через восстановление пароля — отправляем на смену пароля

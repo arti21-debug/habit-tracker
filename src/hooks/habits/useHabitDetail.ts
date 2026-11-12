@@ -1,20 +1,12 @@
 "use client";
 import { getHabitById } from "@/lib/habits";
-import {
-  completeHabit,
-  getHabitCompletions,
-  uncompleteHabit,
-} from "@/lib/completions";
+import { getHabitCompletions } from "@/lib/completions";
 import { getUser, getUserTimezone } from "@/lib/profiles";
 import { ServerHabit } from "@/types/data";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useLocale } from "next-intl";
-
-type UpdateHabitStatus = {
-  habitId: string;
-  date: string;
-  isDone: boolean;
-};
+import useToggleCompletion from "./useToggleCompletion";
+import { getToday, monthName } from "@/utils/date";
 
 export default function useHabitDetail(id: string) {
   // получение юзера
@@ -29,22 +21,8 @@ export default function useHabitDetail(id: string) {
     queryFn: () => getHabitById(id),
   });
 
-  const queryClient = useQueryClient();
-
   // Отметить/отменить
-  const { mutate, isPending } = useMutation({
-    mutationFn: ({ habitId, date, isDone }: UpdateHabitStatus) =>
-      isDone ? uncompleteHabit(habitId, date) : completeHabit(habitId, date),
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["completions"],
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: ["habits-with-completions"],
-      });
-    },
-  });
+  const { mutate, isPending } = useToggleCompletion();
 
   // Получение истории выполнений привычки
   const { data: completions } = useQuery({
@@ -61,22 +39,12 @@ export default function useHabitDetail(id: string) {
 
   const locale = useLocale();
 
-  // форматирование time_zone в формат строчной даты
-  const date = profile
-    ? new Intl.DateTimeFormat("en-CA", {
-        timeZone: profile.time_zone,
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      }).format(new Date())
-    : undefined;
+  const date = profile ? getToday(profile.time_zone) : undefined;
 
   // проверяем есть ли запись за сегодня
   const isDone = completions?.some(
     (completion) => completion.completion_date === date,
   );
-
-  console.log(date);
 
   const today = new Date();
   const startDate = new Date(); // дата первой выполненной привычки внутри 3-мес промежутка
@@ -86,7 +54,7 @@ export default function useHabitDetail(id: string) {
     startDate.setMonth(startDate.getMonth() - 3); // запись - 3 месяца назад
     const days = Math.round(
       (Number(today) - Number(startDate)) / (1000 * 60 * 60 * 24),
-    ); // количиество дней в промежутке по полуночи
+    ); // количество дней в промежутке по полуночи
 
     // итерация по дням промежутка и реверс в нужной последовательности
     const dates = Array.from({ length: days + 1 }, (_, i) => {
@@ -103,34 +71,20 @@ export default function useHabitDetail(id: string) {
 
   const dates = getDates();
 
-  // переменные под отображение даты - первого выполнения привычки
-  const firstTimeHabitComplete = new Date(
-    completions?.slice(-1)[0]?.completion_date,
-  );
-  const startDay = firstTimeHabitComplete.getDate();
-  const startMonth = firstTimeHabitComplete.toLocaleDateString(locale, {
-    month: "long",
-  });
-  const capitalizedMonth = startMonth[0].toUpperCase() + startMonth.slice(1);
-  const startYear = startDate.getFullYear();
+  // дата первого выполнения привычки (completions отсортированы от новых к старым)
+  const firstIso = completions?.slice(-1)[0]?.completion_date;
 
-  // месяца отображаемых привычек, от и до и год относительно последней
-  const monthFrom = new Date(dates.slice(-1)[0]?.dateString).toLocaleDateString(
-    locale,
-    {
-      month: "long",
-    },
-  );
-  const monthTo = new Date(dates.slice(0)[0]?.dateString).toLocaleDateString(
-    locale,
-    {
-      month: "long",
-    },
-  );
+  const startDay = firstIso ? Number(firstIso.slice(8)) : undefined;
+  const capitalizedMonth = firstIso ? monthName(firstIso, locale) : undefined;
+  const startYear = firstIso ? firstIso.slice(0, 4) : undefined;
 
-  const capitalizedMonthFrom = monthFrom[0].toUpperCase() + monthFrom.slice(1);
-  const capitalizedMonthTo = monthTo[0].toUpperCase() + monthTo.slice(1);
-  const yearTo = new Date(dates.slice(0)[0]?.dateString).getFullYear();
+  // месяцы и год отображаемого промежутка (dates идут от новых к старым)
+  const newestIso = dates[0]?.dateString;
+  const oldestIso = dates[dates.length - 1]?.dateString;
+
+  const capitalizedMonthFrom = oldestIso ? monthName(oldestIso, locale) : "";
+  const capitalizedMonthTo = newestIso ? monthName(newestIso, locale) : "";
+  const yearTo = newestIso ? newestIso.slice(0, 4) : "";
 
   return {
     habit,

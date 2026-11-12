@@ -3,21 +3,19 @@ import { updateUserData } from "@/lib/profiles";
 import { isAuthError } from "@supabase/supabase-js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
 export default function useSettingForm(
   username: string,
   email: string | undefined,
 ) {
-  const [newUsername, setNewUsername] = useState("");
-  const [newEmail, setNewEmail] = useState("");
+  const [editedUsername, setNewUsername] = useState<string | null>(null);
+  const [editedEmail, setNewEmail] = useState<string | null>(null)
   const [newPassword, setNewPassword] = useState("");
 
-  useEffect(() => {
-    if (username) setNewUsername(username);
-    if (email) setNewEmail(email);
-  }, [username, email]); // синхронизируем серверные данные с отображаемыми на форме
+  const newUsername = editedUsername ?? username;
+  const newEmail = editedEmail ?? email ?? "";
 
   // проверка на изменения value формы
   const hasChanges =

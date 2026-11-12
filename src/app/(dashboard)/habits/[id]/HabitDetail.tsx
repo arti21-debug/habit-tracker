@@ -9,7 +9,7 @@ import { useState } from "react";
 import WeekStatChart from "./WeekStatChart";
 import getBestHabitStreak from "@/utils/getBestHabitStreak";
 import getCurrentHabitStreak from "@/utils/getCurrentHabitSreak";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useHabitLabels } from "@/hooks/habits/useHabitLabels";
 
 export default function HabitDetail({ id }: { id: string }) {
@@ -37,6 +37,7 @@ export default function HabitDetail({ id }: { id: string }) {
   const { totalCompletions, lastMonthRate } = useHabitStats(habit?.id);
 
   const router = useRouter();
+  const locale = useLocale();
 
   const bestStreak = getBestHabitStreak(completions ?? []);
   const streak = getCurrentHabitStreak(completions ?? [], profile?.time_zone);
@@ -48,17 +49,25 @@ export default function HabitDetail({ id }: { id: string }) {
 
   const t = useTranslations("HabitId");
   const tStats = useTranslations("HabitId.Stats");
-  const tDays = useTranslations("CreateHabit.days");
   const labels = useHabitLabels();
 
-  if (!habit) return;
-  
   if (isLoading)
     return (
       <div className="flex items-center justify-center pt-20">
         <div className="size-12 animate-spin rounded-full border-2 border-[#2c3440] border-t-[#99aabb]" />
       </div>
     );
+
+  if (!habit) return;
+
+  // ---------- календарь ----------
+  const todayString = date ?? dates[0].dateString; // «сегодня» для рамки
+
+  // короткое название дня недели для подписи в ячейке
+  const weekdayFormatter = new Intl.DateTimeFormat(locale, {
+    weekday: "short",
+    timeZone: "UTC", // даты — календарные, без привязки к поясу
+  });
 
   return (
     <div style={{ background: "var(--color-bg)", minHeight: "100vh" }}>
@@ -137,8 +146,6 @@ export default function HabitDetail({ id }: { id: string }) {
           {/* Mark button — отдельно от шапки */}
           <button
             onClick={() => {
-              if (!habit?.id) return;
-
               if (date) {
                 mutate({
                   habitId: habit.id,
@@ -147,17 +154,18 @@ export default function HabitDetail({ id }: { id: string }) {
                 });
               }
             }}
-            disabled={isPending}
+            disabled={isPending || !date}
             className="shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium bg-primary transition duration-200 hover:bg-[#6d65dd] max-[570px]:px-3 max-[570px]:py-2 max-[570px]:text-xs"
             style={{
               color: "#fff",
               border: "1px solid transparent",
             }}
+            aria-pressed={isDone}
           >
             {isDone ? (
-              <div>✗ {t("done_mark")}</div>
+              <div>✗ {t("done_cancel")}</div>
             ) : (
-              <div>✓ {t("done_cancel")}</div>
+              <div>✓ {t("done_mark")}</div>
             )}
           </button>
         </div>
@@ -235,66 +243,58 @@ export default function HabitDetail({ id }: { id: string }) {
               {t("completion_schedule")}
             </h2>
             <div className="flex gap-2">
-              <h2>{`${capitalizedMonthFrom} — ${capitalizedMonthTo}`}</h2>
+              <h2>{`${capitalizedMonthTo} — ${capitalizedMonthFrom}`}</h2>
               <h2>{yearTo}</h2>
             </div>
           </div>
 
-          {/* Day labels */}
-          <div className="grid grid-cols-7 gap-1.5 mb-1">
-            {[
-              tDays("mon"),
-              tDays("tue"),
-              tDays("wed"),
-              tDays("thu"),
-              tDays("fri"),
-              tDays("sat"),
-              tDays("sun"),
-            ].map((d) => (
-              <div
-                key={d}
-                className="text-center text-xs"
-                style={{ color: "var(--color-text-muted)" }}
-              >
-                {d}
-              </div>
-            ))}
-          </div>
-
           {/* Days grid */}
           <div className="grid grid-cols-7 gap-1.5">
-            {dates.map((date) => {
-              const isDone = completedDates.has(date.dateString);
-              const day = date.dateString.slice(8);
+            {dates.map(({ dateString }) => {
+              const isToday = dateString === todayString;
+              const isDoneDay = completedDates.has(dateString);
+              const day = dateString.slice(8);
 
               return (
                 <button
-                  onClick={() => {
-                    if (!habit?.id) return;
+                  key={dateString}
+                  onClick={() =>
                     mutate({
                       habitId: habit.id,
-                      date: date.dateString,
-                      isDone,
-                    });
-                  }}
-                  key={date.dateString}
+                      date: dateString,
+                      isDone: isDoneDay,
+                    })
+                  }
                   className="group relative aspect-square overflow-hidden rounded-md after:absolute after:inset-0 after:bg-black/0 after:transition-colors hover:after:bg-black/30"
                   style={{
-                    background: isDone
+                    background: isDoneDay
                       ? "var(--color-primary)"
                       : "var(--color-surface-muted)",
                     border: "1px solid var(--color-border)",
+                    outline: isToday
+                      ? "2px solid var(--color-text-primary)"
+                      : undefined,
+                    outlineOffset: isToday ? 1 : undefined,
                   }}
                 >
                   <span className="transition-opacity group-hover:opacity-0">
                     {day.startsWith("0") ? day.slice(1) : day}
                   </span>
 
+                  <span
+                    className="absolute bottom-0.5 right-1 text-[9px] transition-opacity group-hover:opacity-0"
+                    style={{ color: "white" }}
+                  >
+                    {weekdayFormatter.format(
+                      new Date(`${dateString}T00:00:00Z`),
+                    )}
+                  </span>
+
                   <span className="absolute inset-0 z-10 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
-                    {isDone ? (
+                    {isDoneDay ? (
                       <>
                         <span className="text-danger max-[700px]:text-xs max-[580px]:hidden">
-                          {t("cancel")} <br /> {date.dateString}
+                          {t("cancel")} <br /> {dateString}
                         </span>
                         <span className="hidden text-danger text-lg max-[580px]:block">
                           ✗
@@ -303,7 +303,7 @@ export default function HabitDetail({ id }: { id: string }) {
                     ) : (
                       <>
                         <span className="text-success max-[700px]:text-xs max-[580px]:hidden">
-                          {t("mark")} <br /> {date.dateString}
+                          {t("mark")} <br /> {dateString}
                         </span>
                         <span className="hidden text-success text-lg max-[580px]:block">
                           ✓
@@ -345,15 +345,16 @@ export default function HabitDetail({ id }: { id: string }) {
         </div>
 
         {/* Weekly chart */}
-        <WeekStatChart habitId={habit?.id} />
+        <WeekStatChart habitId={habit.id} />
       </div>
+
       {isEditModalOpen && (
         <EditHabitModal
-          habitId={habit?.id}
+          habitId={habit.id}
           setIsEditModalOpen={setIsEditModalOpen}
         />
       )}
-      {isDelModalActive && habit && (
+      {isDelModalActive && (
         <HabitDeleteModal
           isDelModalActive={isDelModalActive}
           setIsDelModalActive={setIsDelModalActive}

@@ -41,17 +41,14 @@ export async function getUserTimezone() {
   const supabase = createClient();
 
   const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError) throw authError;
-  if (!user) throw new Error("Пользователь не авторизован");
+    data: { session },
+  } = await supabase.auth.getSession(); // читает локальную сессию, без запроса в сеть
+  if (!session) throw new Error("Not authenticated");
 
   const { data, error } = await supabase
     .from("profiles")
     .select("time_zone")
-    .eq("id", user.id)
+    .eq("id", session.user.id)
     .single();
 
   if (error) throw error;
@@ -112,7 +109,7 @@ export async function updateUserData(
   } = await supabase.auth.getUser();
 
   if (getUserError) throw getUserError;
-  if (!user) throw new Error("Пользователь не авторизован");
+  if (!user) throw new Error("Not authenticated");
 
   const newUsername = username.trim();
   const newEmail = email.trim();
@@ -154,7 +151,7 @@ export async function updateUserData(
 
   // если состояния истинные, обновляем и редиректим
   const { error } = await supabase.auth.updateUser(updates, {
-    emailRedirectTo: `${window.location.origin}/auth/confirm?next=/settings`,
+    emailRedirectTo: `${window.location.origin}/auth/confirm?next=/setting`,
   });
 
   if (error) throw error;

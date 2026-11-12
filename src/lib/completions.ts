@@ -6,7 +6,10 @@ export async function completeHabit(habitId: string, date: string) {
   const supabase = createClient();
   const { error } = await supabase
     .from("habit_completions")
-    .insert({ habit_id: habitId, completion_date: date });
+    .upsert(
+      { habit_id: habitId, completion_date: date },
+      { onConflict: "habit_id,completion_date", ignoreDuplicates: true },
+    );
   if (error) throw error;
 }
 
