@@ -39,9 +39,22 @@ export default function EditHabitModal({ habitId, setIsEditModalOpen }: Props) {
   const [formData, setFormData] = useState<EditHabitFormData | null>(null);
 
   useEffect(() => {
-    // заполняем один раз: фоновое обновление данных не затрёт правки пользователя
-    if (habit) setFormData((prev) => prev ?? toFormData(habit));
-  }, [habit]); // синхронизируем данные, чтобы не потерять на начальном рендере
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [handleClose]);
+
+  // заполняем один раз: фоновое обновление данных не затрёт правки пользователя
+  if (habit && formData === null) {
+    setFormData(toFormData(habit));
+  } // синхронизируем данные, чтобы не потерять на начальном рендере
 
   const isSubmitBtnDisabled =
     isPending ||
@@ -57,7 +70,7 @@ export default function EditHabitModal({ habitId, setIsEditModalOpen }: Props) {
   const tEdit = useTranslations("EditHabit");
 
   // считаем загрузкой не только loading состояние, но и отсутсвие данных
-  const isPreparing = isLoading || (!!habit && !formData)
+  const isPreparing = isLoading || (!!habit && !formData);
 
   return (
     <div
@@ -109,6 +122,8 @@ export default function EditHabitModal({ habitId, setIsEditModalOpen }: Props) {
             background: "var(--color-surface)",
             border: "1px solid var(--color-border)",
           }}
+          role="dialog"
+          aria-modal="true"
         >
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
@@ -126,6 +141,7 @@ export default function EditHabitModal({ habitId, setIsEditModalOpen }: Props) {
                 background: "var(--color-surface-muted)",
                 color: "var(--color-text-muted)",
               }}
+              aria-label="close"
             >
               ✕
             </button>

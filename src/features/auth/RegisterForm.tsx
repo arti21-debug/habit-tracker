@@ -80,30 +80,42 @@ export default function RegisterForm({ setActiveAuth }: RegisterFormProps) {
           >
             <div className="relative">
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-text-secondary max-[1024px]:text-xs">
+                <label
+                  className="text-sm font-medium text-text-secondary max-[1024px]:text-xs"
+                  htmlFor="username"
+                >
                   {t("username")}
                 </label>
                 <input
+                  id="username"
                   onChange={(e) => setUsername(e.target.value)}
                   type="text"
                   className="h-9 rounded-lg border border-border p-4 transition duration-200 hover:border-border-hover max-[1024px]:h-8"
                 />
               </div>
               <div className="flex flex-col pt-3 gap-1.5">
-                <label className="text-sm font-medium text-text-secondary max-[1024px]:text-xs">
+                <label
+                  className="text-sm font-medium text-text-secondary max-[1024px]:text-xs"
+                  htmlFor="email"
+                >
                   {t("email")}
                 </label>
                 <input
+                  id="email"
                   onChange={(e) => setEmail(e.target.value)}
                   type="email"
                   className="h-9 rounded-lg border border-border p-4 transition duration-200 hover:border-border-hover max-[1024px]:h-8"
                 />
               </div>
               <div className="flex flex-col pt-3 gap-1.5">
-                <label className="text-sm font-medium text-text-secondary max-[1024px]:text-xs">
+                <label
+                  className="text-sm font-medium text-text-secondary max-[1024px]:text-xs"
+                  htmlFor="password"
+                >
                   {t("password")}
                 </label>
                 <input
+                  id="password"
                   onChange={(e) => setPassword(e.target.value)}
                   type="password"
                   className="h-9 rounded-lg border border-border p-4 transition duration-200 hover:border-border-hover max-[1024px]:h-8"

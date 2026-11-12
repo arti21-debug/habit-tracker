@@ -2,6 +2,10 @@
 import useDashboardStats from "@/hooks/dashboard/useDashboardStats";
 import DashboardHabit from "./DashboardHabit";
 import { useTranslations } from "next-intl";
+import { useEffect } from "react";
+import { updateUserTimezone } from "@/lib/profiles";
+import { useQueryClient } from "@tanstack/react-query";
+import { getToday } from "@/utils/date";
 
 const activityColors: Record<number, string> = {
   0: "var(--color-surface-muted)",
@@ -30,8 +34,21 @@ export default function Dashboard() {
     isActivityReady,
   } = useDashboardStats();
 
+  const queryClient = useQueryClient();
+
+  // обновляем пояс для UTC юзеров (в основном google auth)
+  useEffect(() => {
+    if (user?.id && profile?.time_zone === "UTC") {
+      updateUserTimezone(user.id).then(() =>
+        queryClient.invalidateQueries({ queryKey: ["profile"] }),
+      );
+    }
+  }, [user?.id, profile?.time_zone, queryClient]);
+
   const monthRate = getCurrentMonthCompletionRate(habitsWithCompletions);
   const activity = isActivityReady ? lastYearActivityByDays() : [];
+
+  const today = profile ? getToday(profile.time_zone) : undefined;
 
   const t = useTranslations("Dashboard");
   const tStats = useTranslations("Dashboard.Stats");
@@ -162,6 +179,7 @@ export default function Dashboard() {
               key={habit.id}
               habit={habit}
               timeZone={profile?.time_zone}
+              today={today}
             />
           ))}
         </div>

@@ -2,6 +2,7 @@
 import useAddHabit from "@/hooks/habits/useAddHabit";
 import { useTranslations } from "next-intl";
 import { CATEGORIES, DAILY, DAYS, FREQUENCIES } from "./constants";
+import { useEffect } from "react";
 
 export default function AddHabitModal() {
   const {
@@ -17,6 +18,19 @@ export default function AddHabitModal() {
     isSubmitBtnDisabled,
     dropdownRef,
   } = useAddHabit();
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [handleClose]);
 
   const t = useTranslations("CreateHabit");
 
@@ -60,6 +74,8 @@ export default function AddHabitModal() {
               background: "var(--color-surface)",
               border: "1px solid var(--color-border)",
             }}
+            role="dialog"
+            aria-modal="true"
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
@@ -77,6 +93,7 @@ export default function AddHabitModal() {
                   background: "var(--color-surface-muted)",
                   color: "var(--color-text-muted)",
                 }}
+                aria-label="close"
               >
                 ✕
               </button>

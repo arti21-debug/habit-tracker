@@ -1,20 +1,24 @@
 "use client";
 import useResetPassword from "@/hooks/auth/useResetPassword";
 import { Activity } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-export default function UpdatePassword() {
-  const [resetState, setResetState] = useState("idle");
-  const [errResetPassword, setErrorResetPassword] = useState<null | string>(
-    null,
-  );
-  const [newPassword, setNewPassword] = useState("");
-  const [sumbitError, setSubmitError] = useState<null | string>(null);
+const MIN_PASSWORD_LENGTH = 8;
 
-  const { setPassword } = useResetPassword(
-    setResetState,
-    setErrorResetPassword,
-  );
+export default function UpdatePassword() {
+  const t = useTranslations("Login.UpdatePassword");
+
+  const [resetState, setResetState] = useState("idle");
+  const [serverError, setServerError] = useState<null | string>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [validationError, setValidationError] = useState<null | string>(null);
+
+  const { setPassword } = useResetPassword(setResetState, setServerError);
+
+  // показываем одну ошибку: сначала валидации, потом серверную
+  const error =
+    validationError ?? (resetState === "error" ? serverError : null);
 
   return (
     <main className="flex items-center justify-center h-screen">
@@ -33,50 +37,53 @@ export default function UpdatePassword() {
 
         <div className="w-full flex flex-col items-center">
           <h2 className="font-semibold text-[22px] pt-5 max-[1024px]:text-lg max-[1024px]:pt-4">
-            С возвращением
+            {t("title")}
           </h2>
-          <h3 className="text-text-secondary pt-1.5 max-[1024px]:text-sm">
-            Войдите, чтобы продолжить
-          </h3>
+          <p className="text-text-secondary pt-1.5 text-center max-[1024px]:text-sm">
+            {t("subtitle")}
+          </p>
 
           <form
             onSubmit={(e) => {
               e.preventDefault();
 
-              try {
-                if (newPassword.length < 8)
-                  throw new Error(
-                    "Пароль должен содержать не менее 8 символов",
-                  );
-                setPassword(newPassword);
-              } catch (err) {
-                if (err instanceof Error) {
-                  setSubmitError(err.message);
-                }
+              if (newPassword.length < MIN_PASSWORD_LENGTH) {
+                setValidationError(t("passwordMin"));
+                return;
               }
+
+              setValidationError(null);
+              setPassword(newPassword);
             }}
             className="flex flex-col gap-y-4 w-full pt-5 max-[1024px]:gap-y-3.5"
           >
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-text-secondary max-[1024px]:text-xs">
-                Введите новый пароль
+              <label
+                htmlFor="new-password"
+                className="text-sm font-medium text-text-secondary max-[1024px]:text-xs"
+              >
+                {t("passwordLabel")}
               </label>
               <input
-                onChange={(e) => setNewPassword(e.target.value)}
-                type="password"
+                id="new-password"
                 name="password"
+                type="password"
+                autoComplete="new-password"
+                value={newPassword}
+                onChange={(e) => {
+                  setNewPassword(e.target.value);
+                  if (validationError) setValidationError(null); // ошибка уходит, как только человек начал исправлять
+                }}
                 className="h-9 rounded-lg border border-border p-4 transition duration-200 hover:border-border-hover max-[1024px]:h-8"
               />
             </div>
 
-            {sumbitError && (
-              <div className="flex items-center justify-center w-full text-xs p-2 rounded-lg border border-red-200 bg-red-50 text-red-600 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400 max-[1024px]:text-[10px]">
-                {sumbitError}
-              </div>
-            )}
-            {resetState === "error" && (
-              <div className="flex items-center justify-center w-full text-xs p-2 rounded-lg border border-red-200 bg-red-50 text-red-600 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400 max-[1024px]:text-[10px]">
-                {errResetPassword}
+            {error && (
+              <div
+                role="alert"
+                className="flex items-center justify-center w-full text-xs p-2 rounded-lg border border-red-200 bg-red-50 text-red-600 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400 max-[1024px]:text-[10px]"
+              >
+                {error}
               </div>
             )}
 
@@ -92,7 +99,7 @@ export default function UpdatePassword() {
                   <span className="w-1 h-1 rounded-full bg-current animate-bounce [animation-delay:300ms]" />
                 </span>
               ) : (
-                "Сохранить"
+                t("submit")
               )}
             </button>
           </form>

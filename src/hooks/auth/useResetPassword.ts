@@ -40,9 +40,9 @@ export default function useResetPassword(
 
       setResetState("success");
       router.push("/dashboard");
-    } catch (error) {
+    } catch {
       // ошибка при сетевом сбое
-      setErrorResetPassword("Не удалось подключиться. Попробуйте ещё раз");
+      setErrorResetPassword(t("network"));
       setResetState("error");
     }
   }

@@ -1,13 +1,22 @@
-import { EditHabit, Habit, ServerHabit } from "@/types/data";
+import { Completion, EditHabit, Habit, HabitWithCompletions, ServerHabit } from "@/types/data";
 import { createClient } from "./supabase/client";
 
 // получение привычек
-export async function getHabits(): Promise<ServerHabit[]> {
+export async function getHabits(): Promise<HabitWithCompletions[]> {
   const supabase = createClient();
 
-  const { data, error } = await supabase.from("habits").select("*");
+  const { data, error } = await supabase
+    .from("habits")
+    .select("*, completions:habit_completions(completion_date, completed_at)");
   if (error) throw error;
-  return data;
+  
+  return data.map((habit) => ({
+    ...habit,
+    // от новых к старым: так ожидают getCurrentHabitStreak и подсчёты
+    completions: [...habit.completions].sort((a: Completion, b: Completion) =>
+      b.completion_date.localeCompare(a.completion_date),
+    ),
+  }));
 }
 
 // создание привычки

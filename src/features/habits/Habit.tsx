@@ -1,18 +1,18 @@
 "use client";
-
 import { useHabit } from "@/app/(dashboard)/habits/context/HabitContext";
 import useArchiveHabit from "@/hooks/habits/useArchiveHabit";
-import useHabitDetail from "@/hooks/habits/useHabitDetail";
 import { useHabitLabels } from "@/hooks/habits/useHabitLabels";
-import useHabitStats from "@/hooks/habits/useHabitStats";
-import { ServerHabit } from "@/types/data";
+import { HabitWithCompletions, ServerHabit } from "@/types/data";
 import getCurrentHabitStreak from "@/utils/getCurrentHabitSreak";
+import { getLastMonthRate } from "@/utils/getLastMonthRate";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 type Props = {
-  habit: ServerHabit;
+  habit: HabitWithCompletions;
+  today: string | undefined;
+  timeZone: string | undefined;
   setIsEditModalOpen: (val: boolean) => void;
   setCurrHabit: (val: null | ServerHabit) => void;
   setIsDelModalActive: (val: boolean) => void;
@@ -26,26 +26,28 @@ const getPercentColor = (percent: string) => {
 
 export default function Habit({
   habit,
+  today,
+  timeZone,
   setIsEditModalOpen,
   setCurrHabit,
   setIsDelModalActive,
 }: Props) {
-  const { lastMonthRate } = useHabitStats(habit.id);
-  const { completions, date, profile } = useHabitDetail(habit.id);
+  const lastMonthRate = getLastMonthRate(habit.completions, today);
 
   // изменение состояния архивирования привычки
   const { mutate } = useArchiveHabit(setIsDelModalActive);
 
   // проверяем есть ли запись за сегодня
-  const isDone = completions?.some(
-    (completion) => completion.completion_date === date,
-  );
+  const isDone = !!today && habit.completions.some((c) => c.completion_date === today);
 
   // состояние меню из контекста
   const { openMenuId, setOpenMenuId } = useHabit();
   const router = useRouter();
 
-  const streak = getCurrentHabitStreak(completions ?? [], profile?.time_zone);
+  const streak = getCurrentHabitStreak(
+    habit.completions,
+    timeZone ?? Intl.DateTimeFormat().resolvedOptions().timeZone,
+  );
 
   const t = useTranslations("Habit");
   const labels = useHabitLabels();
@@ -96,6 +98,7 @@ export default function Habit({
             }}
             className="w-6 h-6 rounded-md flex items-center justify-center text-lg leading-none"
             style={{ color: "var(--color-text-muted)" }}
+            aria-label="menu"
           >
             ···
           </button>

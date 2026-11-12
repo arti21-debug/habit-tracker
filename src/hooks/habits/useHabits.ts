@@ -1,8 +1,9 @@
 "use client";
 import { useHabit } from "@/app/(dashboard)/habits/context/HabitContext";
 import { getHabits } from "@/lib/habits";
-import { getUser } from "@/lib/profiles";
-import { ServerHabit } from "@/types/data";
+import { getUser, getUserTimezone } from "@/lib/profiles";
+import { HabitWithCompletions } from "@/types/data";
+import { getToday } from "@/utils/date";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -18,12 +19,19 @@ export default function useHabits() {
     queryFn: getUser,
   });
 
+  const { data: profile } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: getUserTimezone,
+  });
+  const timeZone: string | undefined = profile?.time_zone;
+  const today = timeZone ? getToday(timeZone) : undefined;
+
   // data привычек и состояний полученных через TanStack
   const {
     data: habits,
     isLoading,
     isError,
-  } = useQuery<ServerHabit[]>({
+  } = useQuery<HabitWithCompletions[]>({
     queryKey: ["habits", user?.id], // передача кэша привычек
     queryFn: getHabits, // передача функции которая получает привычки
     staleTime: 1000 * 60 * 5, // данные считаются свежими 5 минут — запроса не будет
@@ -47,5 +55,7 @@ export default function useHabits() {
     filteredHabits,
     isLoading,
     isError,
+    today,
+    timeZone,
   };
 }

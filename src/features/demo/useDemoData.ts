@@ -20,7 +20,7 @@ export default function useDemoData() {
   const { mutate: seed, isPending: isSeeding } = useMutation({
     mutationFn: async () => {
       const user = await getUser();
-      if (!user) throw new Error("Пользователь не авторизован");
+      if (!user) throw new Error("Not authenticated");
 
       // если профиля нет, берём часовой пояс браузера
       const profile = await getUserTimezone().catch(() => null);
