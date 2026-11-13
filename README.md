@@ -2,42 +2,42 @@
 
 ![CI](https://github.com/arti21-debug/habit-tracker/actions/workflows/ci.yml/badge.svg)
 
-Веб-приложение для отслеживания привычек: отметки по дням, серии (streaks), статистика и календарь выполнения. Интерфейс на русском, украинском и английском.
+A web app for tracking habits: daily check-ins, streaks, statistics and a completion calendar. The interface is available in Russian, Ukrainian and English.
 
-**Демо:** <ссылка на Vercel> · **Тестовый аккаунт:** `yaartem3272@gmail.com` / `11111111` (с заполненными демо-данными)
+**Live demo:** <Vercel link> · **Test account:** `demo@habit-tracker.dev` / `1234567890` (pre-filled with demo data)
 
-## Скриншоты
+## Screenshots
 
-![Дашборд](docs/dashboard.png)
-![Привычки](docs/habits.png)
-![Страница привычки](docs/habit-detail.png)
+![Dashboard](docs/dashboard.png)
+![Habits](docs/habits.png)
+![Habit page](docs/habit-detail.png)
 
-## Возможности
+## Features
 
-- Регистрация и вход по email/паролю и через Google, сброс пароля по письму
-- Создание, редактирование, архивация и удаление привычек (ежедневные и по дням недели)
-- Отметка выполнения за сегодня и за любой день трёх последних месяцев в календаре
-- Текущая и лучшая серия, процент выполнения за 30 дней, график по неделям
-- Часовой пояс пользователя: «сегодня» определяется по его профилю
-- Загрузка аватара, смена языка интерфейса (RU/UK/EN)
-- Демо-данные для быстрого знакомства
+- Sign up and sign in with email/password or Google, password reset by email
+- Create, edit, archive and delete habits (daily or on selected weekdays)
+- Mark completion for today or for any day within the last three months via a calendar
+- Current and best streak, 30-day completion rate, weekly chart
+- User time zone: "today" is determined by the time zone saved in the profile
+- Avatar upload, interface language switch (RU/UK/EN)
+- Demo data for a quick start
 
-## Стек
+## Tech stack
 
 Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS 4 · Supabase (Auth, Postgres, Storage) · TanStack Query · next-intl · Recharts · Vitest · GitHub Actions
 
-## Технические решения
+## Technical decisions
 
-- **Безопасность данных держится на RLS.** Политики Postgres гарантируют, что пользователь видит и меняет только свои строки. Для дочерней таблицы `habit_completions` владелец проверяется через родительскую привычку, поэтому чужой `habit_id` ничего не даст. Схема и политики: [`supabase/schema.sql`](supabase/schema.sql).
-- **Календарные даты хранятся и сравниваются как строки `YYYY-MM-DD`.** Объект `Date` не создаётся из таких строк, потому что `new Date("2026-11-09")` означает полночь по UTC и в часовых поясах западнее UTC даёт соседний день. Подсчёты идут арифметикой над датами в UTC (`Date.UTC`), форматирование с `timeZone: "UTC"`.
-- **Единый источник «сегодня».** Функция `getToday(timeZone)` определяет текущую дату по часовому поясу из профиля. Это исключило расхождение «сегодня» между разными частями интерфейса и ошибки 409 на уникальном ограничении `(habit_id, completion_date)`. Вставка отметки идемпотентна (`upsert` с `ignoreDuplicates`).
-- **Один запрос вместо N.** Привычки загружаются вместе с выполнениями через встроенную выборку PostgREST, статистика карточек считается на клиенте из этих данных, а не отдельными запросами на каждую карточку.
-- **Серверная проверка сессии + начальные данные в кэше.** Пользователь, полученный на сервере в layout, кладётся в кэш TanStack Query, поэтому клиентские хуки не делают повторный запрос к Auth. У запросов задан `staleTime`, лишних перезагрузок при фокусе окна нет.
-- **Часовой пояс для Google-аккаунтов** синхронизируется при заходе на дашборд: триггер в БД создаёт профиль с `UTC`, а клиент один раз обновляет его по поясу устройства.
+- **Data security relies on RLS.** Postgres policies guarantee that a user can see and modify only their own rows. For the child table `habit_completions`, ownership is checked through the parent habit, so a foreign `habit_id` gives no access. Schema and policies: [`supabase/schema.sql`](supabase/schema.sql).
+- **Calendar dates are stored and compared as `YYYY-MM-DD` strings.** A `Date` object is never created from such strings, because `new Date("2026-11-09")` means midnight UTC and shows the previous day in time zones west of UTC. Calculations use UTC date arithmetic (`Date.UTC`), formatting uses `timeZone: "UTC"`.
+- **A single source of "today".** `getToday(timeZone)` determines the current date from the profile's time zone. This removed mismatches of "today" between different parts of the UI and 409 errors on the unique constraint `(habit_id, completion_date)`. Completion inserts are idempotent (`upsert` with `ignoreDuplicates`).
+- **One request instead of N.** Habits are fetched together with their completions via PostgREST embedding, and card statistics are computed on the client from that data instead of separate requests per card.
+- **Server-side session check + initial data in the cache.** The user fetched on the server in the layout is put into the TanStack Query cache, so client hooks don't make a repeated Auth request. Queries have a `staleTime`, so there are no needless refetches on window focus.
+- **Time zone for Google accounts** is synchronized when the dashboard opens: a database trigger creates the profile with `UTC`, and the client updates it once from the device time zone.
 
-## Запуск локально
+## Getting started
 
-Требуется Node.js 22 и проект в Supabase.
+Requires Node.js 22 and a Supabase project.
 
 ```bash
 git clone https://github.com/arti21-debug/habit-tracker.git
@@ -45,56 +45,51 @@ cd habit-tracker
 npm ci
 ```
 
-Создайте `.env.local` (имена возьмите из вашего `.env.local`, ниже пример):
+Create `.env.local`:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://iyylnlkawdywctbiwtdf.supabase.co
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_l4nTi8u42DfmbM3U-DX8Ng_uWnQOBCj
-
+NEXT_PUBLIC_SUPABASE_URL=https://<your-project>.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<your-publishable-key>
 ```
 
-Структуру БД, политики и триггер создайте по [`supabase/schema.sql`](supabase/schema.sql) (выполнить в SQL Editor нового проекта). Затем бакет `avatars` и OAuth Google (по желанию) в настройках Supabase.
+Create the database structure, policies and trigger from [`supabase/schema.sql`](supabase/schema.sql) (run it in the SQL Editor of a new project). Then create the `avatars` storage bucket and, optionally, configure Google OAuth in Supabase.
 
 ```bash
 npm run dev
 ```
 
-## Скрипты
+## Scripts
 
-| Команда | Что делает |
+| Command | Description |
 |---|---|
-| `npm run dev` | запуск в режиме разработки |
-| `npm run build` | production-сборка (включает проверку типов) |
-| `npm run lint` | ESLint |
-| `npm test` | unit-тесты (Vitest) |
+| `npm run dev` | start the development server |
+| `npm run build` | production build (includes type checking) |
+| `npm run lint` | run ESLint |
+| `npm test` | run unit tests (Vitest) |
 
-## Тесты и CI
+## Tests and CI
 
-Unit-тесты покрывают чистую логику с датами, где раньше были реальные ошибки: `getToday` (три часовых пояса), `addDaysIso` (границы месяца, года, високосный год), процент за 30 дней (граничные даты) и серии. GitHub Actions на каждый push и pull request запускает `lint`, тесты и `build`.
+Unit tests cover the date-related pure logic where real bugs used to occur: `getToday` (three time zones), `addDaysIso` (month and year boundaries, leap year), the 30-day completion rate (boundary dates) and streaks. On every push and pull request, GitHub Actions runs `lint`, tests and `build`.
 
-## Структура проекта
+## Project structure
 
 ```
 src/
-  app/        маршруты Next.js (App Router), layouts, metadata
-  features/   экраны и крупные компоненты по областям (auth, habits, dashboard, setting)
-  hooks/      хуки данных (TanStack Query) и логики
-  lib/        работа с Supabase, запросы к БД
-  utils/      чистые функции: даты, серии, статистика (покрыты тестами)
-supabase/     снимок схемы БД и политик RLS
+  app/        Next.js routes (App Router), layouts, metadata
+  features/   screens and large components by area (auth, habits, dashboard, setting)
+  hooks/      data hooks (TanStack Query) and logic
+  lib/        Supabase access, database queries
+  utils/      pure functions: dates, streaks, statistics (covered by tests)
+supabase/     database schema snapshot and RLS policies
 ```
 
-## Известные ограничения
+## Known limitations
 
-Я провёл полное ревью проекта и закрыл критичное. Остальное осознанно оставлено на следующие итерации.
+I did a full code review of the project and fixed the critical issues. The rest is deliberately left for future iterations.
 
-## Известные ограничения
-
-Я провёл полное ревью проекта и закрыл критичное. Остальное осознанно оставлено на следующие итерации.
-
-- **Данные загружаются на клиенте.** Страницы — тонкие серверные обёртки над клиентскими компонентами: сервер проверяет сессию и выбирает язык, а данные получает браузер через TanStack Query. Это работает, но не использует главное преимущество SSR — готовый HTML с данными. *План:* загрузка в Server Components, мутации через Server Actions с `revalidatePath` либо `prefetchQuery` + `HydrationBoundary`.
-- **Слой данных (`lib/`) работает только через браузерный клиент Supabase**, нет runtime-валидации (zod) и сгенерированных типов БД. *План:* серверные функции с `server-only` и `supabase gen types`.
-- **Расписание привычки не влияет на статистику.** Серии считаются по подряд идущим дням, поэтому у привычек по дням недели серия не растёт. Процент за 30 дней и месячный процент на дашборде не учитывают расписание и дату создания. Демо-данные созданы с ежедневными привычками. *План:* учитывать `days` и `created_at`, вынести расчёты в чистые функции с тестами.
-- **Значения категорий и частоты** хранятся в БД как русские строки без `check`-ограничений. *План:* стабильные ключи (`health`, `daily`) и перевод при отображении.
-- **Подтверждение email по ссылке** работает только в браузере, где шла регистрация (PKCE). *План:* `token_hash` + `verifyOtp`.
-- **Загрузка аватара:** на клиенте проверяется только `accept="image/*"`, у бакета нет лимитов размера и типа файла.
+- **Data is loaded on the client.** Pages are thin server wrappers around client components: the server checks the session and picks the language, while the browser fetches data through TanStack Query. It works, but doesn't use the main benefit of SSR — HTML rendered with data. *Plan:* load data in Server Components and move mutations to Server Actions with `revalidatePath`, or use `prefetchQuery` + `HydrationBoundary`.
+- **The data layer (`lib/`) only works with the browser Supabase client**, with no runtime validation (zod) and no generated database types. *Plan:* server-side functions with `server-only` and `supabase gen types`.
+- **A habit's schedule does not affect statistics.** Streaks count consecutive days, so streaks of weekday-based habits don't grow. The 30-day rate and the monthly rate on the dashboard ignore the schedule and the habit's creation date. Demo data uses daily habits. *Plan:* take `days` and `created_at` into account and move the calculations into pure functions with tests.
+- **Category and frequency values** are stored in the database as Russian strings without `check` constraints. *Plan:* stable keys (`health`, `daily`) with translation at display time.
+- **Email confirmation links** only work in the browser where the sign-up happened (PKCE). *Plan:* `token_hash` + `verifyOtp`.
+- **Avatar upload:** the client only checks `accept="image/*"`, and the bucket has no size or file type limits.

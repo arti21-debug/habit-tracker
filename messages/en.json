@@ -163,6 +163,7 @@
     },
     "cancel": "Cancel",
     "create": "Create habit",
+    "created": "Habit added",
     "createFailed": "Failed to add habit. Please try again."
   },
   "HabitDelete": {
