@@ -4,7 +4,7 @@
 
 A web app for tracking habits: daily check-ins, streaks, statistics and a completion calendar. The interface is available in Russian, Ukrainian and English.
 
-**Live demo:** <Vercel link> · **Test account:** `demo@habit-tracker.dev` / `1234567890` (pre-filled with demo data)
+**Live demo:** [<Vercel link>](https://habit-tracker-coral-nu-96.vercel.app/) · **Test account:** `demo@habit-tracker.dev` / `1234567890` (pre-filled with demo data)
 
 ## Screenshots
 
