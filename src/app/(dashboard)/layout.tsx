@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { HabitProvider } from "./habits/context/HabitContext";
 import Providers from "./_components/Providers";
 import { Toaster } from "react-hot-toast";
+import { getDisplayName } from "@/utils/getDisplayName";
 
 export default async function DashboardLayout({
   children,
@@ -23,7 +24,7 @@ export default async function DashboardLayout({
     redirect("/");
   }
 
-  const username = user.user_metadata?.username ?? "";
+  const username = getDisplayName(user);
 
   return (
     <Providers initialUser={user}>

@@ -19,8 +19,8 @@ export default function useSettingForm(
 
   // проверка на изменения value формы
   const hasChanges =
-    newUsername.trim() !== username ||
-    newEmail.trim() !== email ||
+    newUsername?.trim() !== username ||
+    newEmail?.trim() !== email ||
     newPassword !== "";
 
   const queryClient = useQueryClient();

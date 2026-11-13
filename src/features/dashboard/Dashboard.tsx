@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { updateUserTimezone } from "@/lib/profiles";
 import { useQueryClient } from "@tanstack/react-query";
 import { getToday } from "@/utils/date";
+import { getDisplayName } from "@/utils/getDisplayName";
 
 const activityColors: Record<number, string> = {
   0: "var(--color-surface-muted)",
@@ -65,7 +66,7 @@ export default function Dashboard() {
           style={{ color: "var(--color-text-primary)" }}
         >
           {user ? (
-            `${t("hello")}, ${user?.user_metadata.username} 👋`
+            `${t("hello")}, ${getDisplayName(user)} 👋`
           ) : (
             <span className="inline-block w-40 h-6 rounded-md animate-pulse bg-surface-muted" />
           )}
