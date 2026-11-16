@@ -4,7 +4,7 @@
 
 Веб-приложение для отслеживания привычек: отметки по дням, серии (streaks), статистика и календарь выполнения. Интерфейс на русском, украинском и английском.
 
-**Демо:** [<ссылка на Vercel>](https://habit-tracker-coral-nu-96.vercel.app/) · **Тестовый аккаунт:** `demo@habit-tracker.dev` / `1234567890` (с заполненными демо-данными)
+**Демо:** https://habit-tracker-coral-nu-96.vercel.app/ · **Тестовый аккаунт:** `demo@habit-tracker.dev` / `1234567890` (с заполненными демо-данными)
 
 ## Скриншоты
 
@@ -37,7 +37,7 @@ Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS 4 · 
 
 ## Запуск локально
 
-Требуется Node.js 22 и проект в Supabase.
+Требуется Node.js 20.19+ или 22.12+ и проект в Supabase.
 
 ```bash
 git clone https://github.com/arti21-debug/habit-tracker.git
@@ -45,7 +45,11 @@ cd habit-tracker
 npm ci
 ```
 
-Создайте `.env.local` (имена возьмите из вашего `.env.local`, ниже пример):
+Скопируйте шаблон переменных окружения и впишите значения из своего проекта Supabase (Project Settings → API):
+
+```bash
+cp .env.example .env.local
+```
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://<your-project>.supabase.co

@@ -4,7 +4,7 @@
 
 A web app for tracking habits: daily check-ins, streaks, statistics and a completion calendar. The interface is available in Russian, Ukrainian and English.
 
-**Live demo:** [<Vercel link>](https://habit-tracker-coral-nu-96.vercel.app/) · **Test account:** `demo@habit-tracker.dev` / `1234567890` (pre-filled with demo data)
+**Live demo:** https://habit-tracker-coral-nu-96.vercel.app/ · **Test account:** `demo@habit-tracker.dev` / `1234567890` (pre-filled with demo data)
 
 ## Screenshots
 
@@ -37,7 +37,7 @@ Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS 4 · 
 
 ## Getting started
 
-Requires Node.js 22 and a Supabase project.
+Requires Node.js 20.19+ or 22.12+ and a Supabase project.
 
 ```bash
 git clone https://github.com/arti21-debug/habit-tracker.git
@@ -45,7 +45,11 @@ cd habit-tracker
 npm ci
 ```
 
-Create `.env.local`:
+Copy the environment variables template and add the values from your Supabase project (Project Settings → API):
+
+```bash
+cp .env.example .env.local
+```
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://<your-project>.supabase.co
