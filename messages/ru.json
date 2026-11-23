@@ -261,7 +261,9 @@
     "save_changes": "Сохранить изменения",
     "log_out": "Выйти",
     "avatar_upload_success": "Аватар успешно загружен",
-    "avatar_upload_failed": "Не удалось загрузить аватар"
+    "avatar_upload_failed": "Не удалось загрузить аватар",
+    "avatar_invalid_type": "Допустимые форматы: PNG, JPEG, WebP",
+    "avatar_too_large": "Файл слишком большой. Максимум 2 МБ"
   },
   "Nav": {
     "dashboard": "Дашборд",

@@ -96,4 +96,3 @@ I did a full code review of the project and fixed the critical issues. The rest 
 - **A habit's schedule does not affect statistics.** Streaks count consecutive days, so streaks of weekday-based habits don't grow. The 30-day rate and the monthly rate on the dashboard ignore the schedule and the habit's creation date. Demo data uses daily habits. *Plan:* take `days` and `created_at` into account and move the calculations into pure functions with tests.
 - **Category and frequency values** are stored in the database as Russian strings without `check` constraints. *Plan:* stable keys (`health`, `daily`) with translation at display time.
 - **Email confirmation links** only work in the browser where the sign-up happened (PKCE). *Plan:* `token_hash` + `verifyOtp`.
-- **Avatar upload:** the client only checks `accept="image/*"`, and the bucket has no size or file type limits.

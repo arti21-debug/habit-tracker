@@ -7,6 +7,10 @@ import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import useDemoData from "../demo/useDemoData";
 import Image from "next/image";
+import toast from "react-hot-toast";
+
+const MAX_AVATAR_SIZE = 2 * 1024 * 1024; // 2 МБ
+const ALLOWED_AVATAR_TYPES = ["image/png", "image/jpeg", "image/webp"];
 
 const inputClass =
   "w-full px-4 py-3 text-base rounded-lg outline-none transition-colors " +
@@ -90,14 +94,22 @@ export default function Setting() {
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept="image/png,image/jpeg,image/webp"
               className="hidden"
               onChange={(e) => {
                 const file = e.target.files?.[0] ?? null;
+                if (!file) return;
 
-                if (file) {
+                if (!ALLOWED_AVATAR_TYPES.includes(file.type)) {
+                  toast.error(t("avatar_invalid_type"));
+                } else if (file.size > MAX_AVATAR_SIZE) {
+                  toast.error(t("avatar_too_large"));
+                } else {
                   mutate(file);
                 }
+
+                // сбрасываем значение, чтобы тот же файл можно было выбрать повторно
+                e.target.value = "";
               }}
             />
             <button

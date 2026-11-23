@@ -261,7 +261,9 @@
     "save_changes": "Зберегти зміни",
     "log_out": "Вийти",
     "avatar_upload_success": "Аватар успішно завантажено",
-    "avatar_upload_failed": "Не вдалося завантажити аватар"
+    "avatar_upload_failed": "Не вдалося завантажити аватар",
+    "avatar_invalid_type": "Допустимі формати: PNG, JPEG, WebP",
+    "avatar_too_large": "Файл занадто великий. Максимальний розмір — 2 МБ"
   },
   "Nav": {
     "dashboard": "Головна",

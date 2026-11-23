@@ -261,7 +261,9 @@
     "save_changes": "Save changes",
     "log_out": "Log out",
     "avatar_upload_success": "Avatar uploaded successfully",
-    "avatar_upload_failed": "Failed to upload avatar"
+    "avatar_upload_failed": "Failed to upload avatar",
+    "avatar_invalid_type": "Allowed formats: PNG, JPEG, WebP",
+    "avatar_too_large": "File is too large. Maximum size is 2 MB"
   },
   "Nav": {
     "dashboard": "Dashboard",
