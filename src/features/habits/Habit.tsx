@@ -32,7 +32,7 @@ export default function Habit({
   setCurrHabit,
   setIsDelModalActive,
 }: Props) {
-  const lastMonthRate = getLastMonthRate(habit.completions, today);
+  const lastMonthRate = getLastMonthRate(habit.completions, today, habit.days);
 
   // изменение состояния архивирования привычки
   const { mutate } = useArchiveHabit(setIsDelModalActive);
@@ -47,6 +47,7 @@ export default function Habit({
   const streak = getCurrentHabitStreak(
     habit.completions,
     timeZone ?? Intl.DateTimeFormat().resolvedOptions().timeZone,
+    habit.days
   );
 
   const t = useTranslations("Habit");

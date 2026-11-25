@@ -2,7 +2,9 @@
 import { getHabits } from "@/lib/habits";
 import { getUser, getUserTimezone } from "@/lib/profiles";
 import { HabitWithCompletions } from "@/types/data";
+import { getToday } from "@/utils/date";
 import getBestHabitStreak from "@/utils/getBestHabitStreak";
+import { isScheduledOn } from "@/utils/schedule";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale } from "next-intl";
 
@@ -27,6 +29,10 @@ export default function useDashboardStats() {
     queryKey: ["profile", user?.id],
     queryFn: getUserTimezone,
   });
+
+  const timeZone =
+    profile?.time_zone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const todayIso = getToday(timeZone);
 
   const { data: allHabits } = useQuery({
     queryKey: ["habits", user?.id],
@@ -91,27 +97,22 @@ export default function useDashboardStats() {
 
   // получаем лучшие streak каждой из привычек
   const allBestStreaks = habitsWithCompletions?.map((habit) =>
-    getBestHabitStreak(habit.completions),
+    getBestHabitStreak(habit.completions, habit.days),
   );
 
   // находим лучшую streak
   const bestStreakOverall =
     allBestStreaks.length > 0 ? Math.max(...allBestStreaks) : 0;
 
-  const day = new Date().getDay();
-  const todayDate = toISO(new Date());
-
-  // фильтруем привычки которые выполняются в текущий день недели
-  const habitsToday = habitsWithCompletions?.filter(
-    (habit) =>
-      !habit.days?.length || habit.days.some((d) => daysMap[d] === day),
+  // привычки, запланированные на сегодня
+  const habitsToday = habitsWithCompletions.filter((habit) =>
+    isScheduledOn(habit.days, todayIso),
   );
 
-  // находим сегодняшние привычки которые уже выполнены
-  const habitsCompletedToday =
-    habitsToday?.filter((habit) =>
-      habit.completions.some((comp) => comp.completion_date === todayDate),
-    ).length ?? 0;
+  // из них уже выполненные сегодня
+  const habitsCompletedToday = habitsToday.filter((habit) =>
+    habit.completions.some((comp) => comp.completion_date === todayIso),
+  ).length;
 
   // вычислем процент выполненных привычек за сегодня
   const totalHabitsToday = habitsToday.length ?? 0;

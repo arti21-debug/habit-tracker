@@ -11,6 +11,7 @@ import getBestHabitStreak from "@/utils/getBestHabitStreak";
 import getCurrentHabitStreak from "@/utils/getCurrentHabitSreak";
 import { useLocale, useTranslations } from "next-intl";
 import { useHabitLabels } from "@/hooks/habits/useHabitLabels";
+import { getLastMonthRate } from "@/utils/getLastMonthRate";
 
 export default function HabitDetail({ id }: { id: string }) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -34,13 +35,18 @@ export default function HabitDetail({ id }: { id: string }) {
     isPending,
   } = useHabitDetail(id);
 
-  const { totalCompletions, lastMonthRate } = useHabitStats(habit?.id);
+  const { totalCompletions } = useHabitStats(habit?.id);
 
   const router = useRouter();
   const locale = useLocale();
 
-  const bestStreak = getBestHabitStreak(completions ?? []);
-  const streak = getCurrentHabitStreak(completions ?? [], profile?.time_zone);
+  const bestStreak = getBestHabitStreak(completions ?? [], habit?.days);
+  const streak = getCurrentHabitStreak(
+    completions ?? [],
+    profile?.time_zone ?? Intl.DateTimeFormat().resolvedOptions().timeZone,
+    habit?.days,
+  );
+  const lastMonthRate = getLastMonthRate(completions ?? [], date, habit?.days);
 
   // Set выполненных дат для быстрой проверки наличия даты
   const completedDates = new Set(

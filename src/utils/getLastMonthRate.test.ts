@@ -1,9 +1,8 @@
 import { describe, expect, it } from "vitest";
-import type { Completion } from "@/types/data";
 import { getLastMonthRate } from "./getLastMonthRate";
+import { getScheduledDates } from "./schedule";
 
-// хелпер: нам важно только поле completion_date, остальное тестам не нужно
-const c = (completion_date: string) => ({ completion_date }) as Completion;
+const c = (completion_date: string) => ({ completion_date });
 
 describe("getLastMonthRate", () => {
   const today = "2026-11-12"; // окно: 2026-10-14 … 2026-11-12 (30 дней)
@@ -28,5 +27,17 @@ describe("getLastMonthRate", () => {
 
   it("если сегодня ещё неизвестно (профиль не загружен), даёт 0.0", () => {
     expect(getLastMonthRate([c("2026-11-12")], undefined)).toBe("0.0");
+  });
+
+  it("привычка по дням недели при полном выполнении даёт 100%", () => {
+    const MWF = ["Пн", "Ср", "Пт"];
+    const done = getScheduledDates(MWF, "2026-10-14", today).map(c);
+    expect(getLastMonthRate(done, today, MWF)).toBe("100.0");
+  });
+
+  it("отметка в незапланированный день не учитывается", () => {
+    const MWF = ["Пн", "Ср", "Пт"];
+    // 10 ноября — вторник
+    expect(getLastMonthRate([c("2026-11-10")], today, MWF)).toBe("0.0");
   });
 });

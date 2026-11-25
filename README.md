@@ -17,9 +17,9 @@ A web app for tracking habits: daily check-ins, streaks, statistics and a comple
 - Sign up and sign in with email/password or Google, password reset by email
 - Create, edit, archive and delete habits (daily or on selected weekdays)
 - Mark completion for today or for any day within the last three months via a calendar
-- Current and best streak, 30-day completion rate, weekly chart
+- Current and best streak, 30-day completion rate, weekly chart; all of it respects the habit's schedule
 - User time zone: "today" is determined by the time zone saved in the profile
-- Avatar upload, interface language switch (RU/UK/EN)
+- Avatar upload (PNG/JPEG/WebP up to 2 MB), interface language switch (RU/UK/EN)
 - Demo data for a quick start
 
 ## Tech stack
@@ -34,6 +34,7 @@ Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS 4 · 
 - **One request instead of N.** Habits are fetched together with their completions via PostgREST embedding, and card statistics are computed on the client from that data instead of separate requests per card.
 - **Server-side session check + initial data in the cache.** The user fetched on the server in the layout is put into the TanStack Query cache, so client hooks don't make a repeated Auth request. Queries have a `staleTime`, so there are no needless refetches on window focus.
 - **Time zone for Google accounts** is synchronized when the dashboard opens: a database trigger creates the profile with `UTC`, and the client updates it once from the device time zone.
+- **Statistics respect the habit's schedule.** Streaks and completion rates are pure functions over scheduled days (`utils/schedule.ts`) and are covered by unit tests. A scheduled day that is still today and not yet marked doesn't break the streak.
 
 ## Getting started
 
@@ -73,7 +74,7 @@ npm run dev
 
 ## Tests and CI
 
-Unit tests cover the date-related pure logic where real bugs used to occur: `getToday` (three time zones), `addDaysIso` (month and year boundaries, leap year), the 30-day completion rate (boundary dates) and streaks. On every push and pull request, GitHub Actions runs `lint`, tests and `build`.
+Unit tests cover the date and schedule pure logic where real bugs used to occur: `getToday` (three time zones), `addDaysIso` (month and year boundaries, leap year), the habit schedule (`isScheduledOn`, `getScheduledDates`), streaks over scheduled days and the 30-day completion rate (boundary dates). On every push and pull request, GitHub Actions runs `lint`, tests and `build`.
 
 ## Project structure
 
@@ -83,7 +84,7 @@ src/
   features/   screens and large components by area (auth, habits, dashboard, setting)
   hooks/      data hooks (TanStack Query) and logic
   lib/        Supabase access, database queries
-  utils/      pure functions: dates, streaks, statistics (covered by tests)
+  utils/      pure functions: dates, schedule, streaks, statistics (covered by tests)
 supabase/     database schema snapshot and RLS policies
 ```
 
@@ -93,6 +94,6 @@ I did a full code review of the project and fixed the critical issues. The rest 
 
 - **Data is loaded on the client.** Pages are thin server wrappers around client components: the server checks the session and picks the language, while the browser fetches data through TanStack Query. It works, but doesn't use the main benefit of SSR — HTML rendered with data. *Plan:* load data in Server Components and move mutations to Server Actions with `revalidatePath`, or use `prefetchQuery` + `HydrationBoundary`.
 - **The data layer (`lib/`) only works with the browser Supabase client**, with no runtime validation (zod) and no generated database types. *Plan:* server-side functions with `server-only` and `supabase gen types`.
-- **A habit's schedule does not affect statistics.** Streaks count consecutive days, so streaks of weekday-based habits don't grow. The 30-day rate and the monthly rate on the dashboard ignore the schedule and the habit's creation date. Demo data uses daily habits. *Plan:* take `days` and `created_at` into account and move the calculations into pure functions with tests.
+- **Statistics simplifications.** The completion rate ignores the habit's creation date, so for a new habit it is understated during the first month: it is divided by all scheduled days in the window. Schedule history isn't stored, so after changing the weekdays, past streaks and rates are recalculated using the new schedule. *Plan:* clamp the window to the creation date and store schedule history.
 - **Category and frequency values** are stored in the database as Russian strings without `check` constraints. *Plan:* stable keys (`health`, `daily`) with translation at display time.
 - **Email confirmation links** only work in the browser where the sign-up happened (PKCE). *Plan:* `token_hash` + `verifyOtp`.
