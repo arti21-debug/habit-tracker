@@ -1,10 +1,17 @@
 import { Completion, EditHabit, Habit, HabitWithCompletions, ServerHabit } from "@/types/data";
 import { createClient } from "./supabase/client";
+import { SupabaseClient } from "@supabase/supabase-js";
+
+/**
+ * Получает привычки пользователя вместе с историей выполнений.
+ *
+ * @param supabase - Клиент Supabase для выполнения запроса.
+ * @returns Привычки с completions, отсортированными от новых к старым.
+ * @throws Ошибка Supabase, если запрос не выполнен.
+ */
 
 // получение привычек
-export async function getHabits(): Promise<HabitWithCompletions[]> {
-  const supabase = createClient();
-
+export async function fetchHabits(supabase: SupabaseClient,): Promise<HabitWithCompletions[]> {
   const { data, error } = await supabase
     .from("habits")
     .select("*, completions:habit_completions(completion_date, completed_at)");
@@ -18,6 +25,13 @@ export async function getHabits(): Promise<HabitWithCompletions[]> {
     ),
   }));
 }
+
+/**
+ * Создаёт Supabase-клиент и передаёт его в fetchHabits.
+ * Используется как queryFn для получения привычек.
+ */
+
+export const getHabits = () => fetchHabits(createClient());
 
 // создание привычки
 export async function createHabit(habitData: Habit) {
