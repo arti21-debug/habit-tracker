@@ -1,6 +1,21 @@
-import { Completion, EditHabit, Habit, HabitWithCompletions, ServerHabit } from "@/types/data";
+import { EditHabit, Habit, HabitWithCompletions, ServerHabit } from "@/types/data";
 import { createClient } from "./supabase/client";
 import { SupabaseClient } from "@supabase/supabase-js";
+import { Database, Tables } from "@/types/database";
+import { habitInputSchema } from "./schemas/habit";
+
+// Строка из БД (поля могут быть null) -> форма, которую ждёт приложение
+export function toServerHabit(row: Tables<"habits">): ServerHabit {
+  return {
+    ...row,
+    description: row.description ?? "",
+    icon: row.icon ?? "",
+    color: row.color ?? "",
+    category: row.category ?? "",
+    frequency: row.frequency ?? "",
+    days: row.days ?? undefined,
+  };
+}
 
 /**
  * Получает привычки пользователя вместе с историей выполнений.
@@ -11,16 +26,16 @@ import { SupabaseClient } from "@supabase/supabase-js";
  */
 
 // получение привычек
-export async function fetchHabits(supabase: SupabaseClient,): Promise<HabitWithCompletions[]> {
+export async function fetchHabits(supabase: SupabaseClient<Database>,): Promise<HabitWithCompletions[]> {
   const { data, error } = await supabase
     .from("habits")
     .select("*, completions:habit_completions(completion_date, completed_at)");
   if (error) throw error;
   
-  return data.map((habit) => ({
-    ...habit,
+  return data.map(({ completions, ...row }) => ({
+    ...toServerHabit(row),
     // от новых к старым: так ожидают getCurrentHabitStreak и подсчёты
-    completions: [...habit.completions].sort((a: Completion, b: Completion) =>
+    completions: [...completions].sort((a, b) =>
       b.completion_date.localeCompare(a.completion_date),
     ),
   }));
@@ -35,15 +50,20 @@ export const getHabits = () => fetchHabits(createClient());
 
 // создание привычки
 export async function createHabit(habitData: Habit) {
+  const parsed = habitInputSchema.safeParse(habitData);
+  if (!parsed.success) throw new Error(parsed.error.issues[0].message)
+
   const supabase = createClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
+  if (!user) throw new Error("Not authenticated");
+
   const { error } = await supabase.from("habits").insert({
     ...habitData,
-    user_id: user?.id,
+    user_id: user.id,
   });
   if (error) throw error;
 }
@@ -51,7 +71,9 @@ export async function createHabit(habitData: Habit) {
 // получение привычки
 export async function getHabitById(
   id: string | undefined,
-): Promise<ServerHabit> {
+): Promise<ServerHabit | null> {
+  if (!id) return null;
+
   const supabase = createClient();
 
   const { data, error } = await supabase
@@ -61,7 +83,7 @@ export async function getHabitById(
     .maybeSingle();
 
   if (error) throw error;
-  return data;
+  return data ? toServerHabit(data) : null;
 }
 
 // удаление привычки
@@ -76,10 +98,16 @@ export async function deleteHabit(id: string) {
 export async function editHabitData(updateHabit: EditHabit) {
   const supabase = createClient();
 
+  const { id, ...changes } = updateHabit;
+  if (!id) throw new Error("Habit id is required");
+
+  const parsed = habitInputSchema.partial().safeParse(changes);
+  if (!parsed.success) throw new Error(parsed.error.issues[0].message);
+
   const { error } = await supabase
     .from("habits")
-    .update(updateHabit)
-    .eq("id", updateHabit.id);
+    .update(changes)
+    .eq("id", id);
   if (error) throw error;
 }
 

@@ -1,5 +1,6 @@
 import { Completion, HabitWithCompletions } from "@/types/data";
 import { createClient } from "./supabase/client";
+import { toServerHabit } from './habits'
 
 // Отметить привычку выполненной
 export async function completeHabit(habitId: string, date: string) {
@@ -75,7 +76,7 @@ export async function getHabitsWithCompletions(
 
   if (error) throw error;
   return data.map((habit) => ({
-    ...habit,
+    ...toServerHabit(habit),
     completions: habit.completions.sort(
       (a: Completion, b: Completion) =>
         new Date(b.completion_date).getTime() -

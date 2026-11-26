@@ -36,6 +36,7 @@ Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS 4 · 
 - **Time zone for Google accounts** is synchronized when the dashboard opens: a database trigger creates the profile with `UTC`, and the client updates it once from the device time zone.
 - **Statistics respect the habit's schedule.** Streaks and completion rates are pure functions over scheduled days (`utils/schedule.ts`) and are covered by unit tests. A scheduled day that is still today and not yet marked doesn't break the streak.
 - **Server-side data loading on the habits page.** A Server Component fetches the habits and the profile and passes them into the TanStack Query cache via `HydrationBoundary`: the HTML arrives with the list already rendered, and the database query on page open runs once, on the server.
+- **Type-safe database access.** Types are generated using `supabase gen types`, Supabase clients are typed with the `Database` generic, and user input is validated with Zod.
 
 ## Getting started
 
@@ -94,7 +95,7 @@ supabase/     database schema snapshot and RLS policies
 I did a full code review of the project and fixed the critical issues. The rest is deliberately left for future iterations.
 
 - **Some pages still load data on the client.** The habits list fetches data on the server (Server Component + `prefetchQuery` / `HydrationBoundary`) and arrives as ready HTML, while the other pages (dashboard, habit page, settings) are still loaded in the browser via TanStack Query. *Plan:* move the remaining pages and mutations to Server Actions with `revalidatePath`; for the dashboard, first compute "today" from the profile's time zone to avoid hydration mismatches.
-- **The data layer (`lib/`) only works with the browser Supabase client**, with no runtime validation (zod) and no generated database types. *Plan:* server-side functions with `server-only` and `supabase gen types`.
+- **No dedicated repository layer for data access.** DB types are generated from the Supabase schema (`npm run types`), clients are typed, and user input is validated with a zod schema before it is written. *Plan:* extract data access into a repository layer and move mutations to Server Actions.
 - **Statistics simplifications.** The completion rate ignores the habit's creation date, so for a new habit it is understated during the first month: it is divided by all scheduled days in the window. Schedule history isn't stored, so after changing the weekdays, past streaks and rates are recalculated using the new schedule. *Plan:* clamp the window to the creation date and store schedule history.
 - **Category and frequency values** are stored in the database as Russian strings without `check` constraints. *Plan:* stable keys (`health`, `daily`) with translation at display time.
 - **Email confirmation links** only work in the browser where the sign-up happened (PKCE). *Plan:* `token_hash` + `verifyOtp`.

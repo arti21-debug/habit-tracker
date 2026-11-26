@@ -179,7 +179,10 @@ export default function Dashboard() {
             <DashboardHabit
               key={habit.id}
               habit={habit}
-              timeZone={profile?.time_zone}
+              timeZone={
+                profile?.time_zone ??
+                Intl.DateTimeFormat().resolvedOptions().timeZone
+              }
               today={today}
             />
           ))}

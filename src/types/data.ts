@@ -1,15 +1,15 @@
+import { Tables } from "./database";
+
 export interface UserData {
   username: string;
   email: string;
 }
 
-export interface Completion {
-  id: string;
-  habit_id: string;
-  completion_date: string;
-  completed_at: string;
-  created_at: string;
-}
+// Только те поля, которые выбирает fetchHabits
+export type Completion = Pick<
+  Tables<"habit_completions">,
+  "completion_date" | "completed_at"
+>;
 
 export type EditHabitFormData = Required<Habit> & { id: string };
 
@@ -43,6 +43,6 @@ export interface HabitWithCompletions extends ServerHabit {
 export interface ServerHabit extends Habit {
   id: string;
   user_id: string;
-  created_at: string;
+  created_at: string | null;
   is_archived: boolean;
 }

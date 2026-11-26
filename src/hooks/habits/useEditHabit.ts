@@ -38,7 +38,7 @@ export default function useEditHabit(
     data: habit,
     isLoading,
     isError,
-  } = useQuery<ServerHabit>({
+  } = useQuery<ServerHabit | null>({
     queryKey: ["habits", habitId],
     queryFn: () => getHabitById(habitId),
   });

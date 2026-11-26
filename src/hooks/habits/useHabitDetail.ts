@@ -16,7 +16,7 @@ export default function useHabitDetail(id: string) {
   });
 
   // получение привычки
-  const { data: habit, isLoading } = useQuery<ServerHabit>({
+  const { data: habit, isLoading } = useQuery<ServerHabit | null>({
     queryKey: ["habits", id],
     queryFn: () => getHabitById(id),
   });
