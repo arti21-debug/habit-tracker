@@ -9,7 +9,8 @@
     "lint": "eslint",
     "lint:fix": "eslint . --fix",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "types": "supabase gen types typescript --project-id iyylnlkawdywctbiwtdf --schema public > src/types/database.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -32,6 +33,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.4.6",
+    "supabase": "^3.4.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^5.1.0"
